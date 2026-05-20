@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Employee HR System — ER Diagram</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --gold: #D4A017;
+    --green: #2E7D32;
+    --red: #C62828;
+    --blue: #1565C0;
+    --bg: #0f1923;
+    --bg2: #162030;
+    --card: rgba(255,255,255,0.045);
+    --border: rgba(255,255,255,0.1);
+    --text: #E8EDF2;
+    --muted: #7A8FA6;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse 80% 60% at 20% 10%, rgba(21,101,192,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 80%, rgba(212,160,23,0.08) 0%, transparent 60%);
+  }
+
+  /* ── Header ── */
+  header {
+    text-align: center;
+    padding: 40px 24px 24px;
+    animation: fadeDown 0.7s ease both;
+  }
+  .badge {
+    display: inline-block;
+    background: rgba(212,160,23,0.12);
+    border: 1px solid rgba(212,160,23,0.35);
+    color: var(--gold);
+    font-size: 10px;
+    letter-spacing: 3px;
+    font-weight: 700;
+    border-radius: 40px;
+    padding: 5px 18px;
+    margin-bottom: 14px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  h1 {
+    font-size: clamp(22px, 4vw, 34px);
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+  }
+  .subtitle {
+    color: #90CAF9;
+    font-size: 13px;
+    font-weight: 400;
+  }
+
+  /* ── Tabs ── */
+  .tabs {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding: 0 24px 28px;
+    flex-wrap: wrap;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+  .tab-btn {
+    padding: 8px 20px;
+    border-radius: 24px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: #B0BEC5;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: 'Syne', sans-serif;
+    cursor: pointer;
+    transition: all 0.22s;
+    letter-spacing: 0.4px;
+  }
+  .tab-btn:hover { border-color: rgba(255,255,255,0.25); color: #fff; }
+  .tab-btn.active {
+    background: var(--gold);
+    color: #0f1923;
+    border-color: var(--gold);
+    font-weight: 800;
+  }
+
+  /* ── Tab Panels ── */
+  .panel { display: none; animation: fadeUp 0.4s ease both; }
+  .panel.active { display: block; }
+
+  /* ── ER Canvas ── */
+  .er-wrap {
+    max-width: 1020px;
+    margin: 0 auto 24px;
+    padding: 0 20px;
+  }
+  .er-canvas {
+    position: relative;
+    background: #f7f8fa;
+    border-radius: 18px;
+    box-shadow: 0 24px 70px rgba(0,0,0,0.45);
+    border: 1px solid rgba(255,255,255,0.12);
+    overflow: hidden;
+    height: 760px;
+  }
+  .er-svg {
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+  }
+
+  /* ── Table Cards ── */
+  .tbl {
+    position: absolute;
+    width: 310px;
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+    cursor: pointer;
+    transition: transform 0.18s, box-shadow 0.18s;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+  }
+  .tbl:hover { transform: scale(1.015); box-shadow: 0 8px 36px rgba(0,0,0,0.18); }
+  .tbl.selected { transform: scale(1.025); z-index: 20; }
+  .tbl-header {
+    display: flex; align-items: center; gap: 8px;
+    padding: 11px 16px;
+    color: #fff;
+    font-size: 12.5px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+  }
+  .col-header-row {
+    display: grid;
+    grid-template-columns: 88px 1fr 90px;
+    padding: 4px 10px;
+    background: #F0F2F5;
+    border-bottom: 1px solid #E0E4E9;
+    font-size: 8.5px;
+    font-weight: 700;
+    color: #888;
+    letter-spacing: 1px;
+  }
+  .col-row {
+    display: grid;
+    grid-template-columns: 88px 1fr 90px;
+    padding: 4px 10px;
+    border-bottom: 1px solid #F2F4F6;
+    align-items: center;
+  }
+  .col-row:last-child { border-bottom: none; }
+  .col-row:nth-child(even) { background: #FAFBFC; }
+  .badge-pk   { background:#FFF3E0; color:#E65100; border:1px solid #FF9800; }
+  .badge-fk   { background:#EDE7F6; color:#4527A0; border:1px solid #7E57C2; }
+  .badge-nn   { background:#E8F5E9; color:#1B5E20; border:1px solid #4CAF50; }
+  .badge-null { background:#F5F5F5; color:#757575; border:1px solid #BDBDBD; }
+  .col-badge {
+    display: inline-block;
+    border-radius: 4px;
+    padding: 1px 4px;
+    font-size: 7.5px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+  .col-name { padding-left: 6px; font-weight: 500; color: #1a1a2e; }
+  .col-name.pk { color: #E65100; font-weight: 800; }
+  .col-name.fk { color: #4527A0; font-weight: 700; }
+  .col-type { color: #607D8B; font-size: 9px; }
+
+  /* Legend */
+  .er-legend {
+    position: absolute; bottom: 14px; right: 14px;
+    background: rgba(255,255,255,0.97);
+    border: 1px solid #E0E4E9;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    z-index: 30;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+  }
+  .er-legend h4 { font-size: 8.5px; letter-spacing: 1.5px; color:#555; margin-bottom:6px; }
+  .legend-row { display:flex; align-items:center; gap:6px; margin-bottom:4px; font-size:9.5px; color:#444; }
+
+  /* ── Detail Panel ── */
+  .detail-panel {
+    max-width: 1020px;
+    margin: 0 auto 12px;
+    padding: 0 20px;
+  }
+  .detail-card {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 20px 24px;
+    border: 1px solid var(--border);
+    animation: fadeUp 0.3s ease both;
+  }
+  .detail-card h3 { font-size: 15px; font-weight: 800; margin-bottom: 14px; }
+  .col-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    gap: 10px;
+  }
+  .col-item {
+    background: rgba(255,255,255,0.05);
+    border-radius: 8px;
+    padding: 10px 12px;
+    border: 1px solid rgba(255,255,255,0.07);
+  }
+  .col-item-top { display:flex; justify-content:space-between; margin-bottom:5px; }
+  .col-item-name { font-family: 'JetBrains Mono', monospace; font-weight:700; color:#fff; font-size:12px; }
+  .col-item-type { font-family: 'JetBrains Mono', monospace; color:#90CAF9; font-size:10px; }
+  .col-item-note { color:#90A4AE; font-size:11px; }
+
+  /* ── Section common ── */
+  .section-wrap { max-width: 1020px; margin: 0 auto; padding: 0 20px 40px; }
+  .section-card {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 20px 22px;
+    margin-bottom: 16px;
+    border: 1px solid var(--border);
+  }
+  .section-card h3 { font-size: 14px; font-weight: 800; margin-bottom: 14px; }
+
+  /* ── Indexes ── */
+  .idx-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(290px,1fr)); gap:10px; }
+  .idx-item {
+    background: rgba(255,255,255,0.06);
+    border-radius: 8px;
+    padding: 12px 14px;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .idx-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+  .idx-name { font-family:'JetBrains Mono',monospace; font-weight:700; color:#fff; font-size:11.5px; }
+  .idx-unique { background:var(--gold); color:#0f1923; border-radius:4px; padding:1px 8px; font-size:8.5px; font-weight:800; }
+  .idx-cols { font-family:'JetBrains Mono',monospace; color:#90CAF9; font-size:10.5px; margin-bottom:2px; }
+  .idx-type { color:#90A4AE; font-size:10.5px; }
+
+  /* ── Relationships ── */
+  .rel-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .rel-item { background:rgba(255,255,255,0.06); border-radius:10px; padding:14px 16px; }
+  .rel-name { font-family:'JetBrains Mono',monospace; font-size:11px; color:#fff; font-weight:700; margin-bottom:8px; line-height:1.6; }
+  .rel-detail { color:#B0BEC5; font-size:11px; line-height:1.9; }
+
+  /* ── SQL DDL ── */
+  .sql-card { background:#0D1117; border-radius:14px; padding:20px; border:1px solid #30363D; }
+  .sql-topbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+  .sql-filename { color:#58A6FF; font-weight:700; font-size:13px; font-family:'JetBrains Mono',monospace; }
+  .copy-btn {
+    background:#21262D; color:#C9D1D9; border:1px solid #30363D;
+    border-radius:6px; padding:7px 16px; cursor:pointer;
+    font-size:12px; font-weight:600; transition:all 0.2s;
+    font-family:'Syne',sans-serif;
+  }
+  .copy-btn:hover { background:#2D333B; }
+  .copy-btn.copied { background:#238636; color:#fff; border-color:#238636; }
+  pre {
+    color:#E6EDF3;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11.5px;
+    line-height:1.75;
+    overflow-x:auto;
+    max-height:520px;
+    overflow-y:auto;
+    white-space:pre;
+  }
+  pre::-webkit-scrollbar { width:6px; height:6px; }
+  pre::-webkit-scrollbar-thumb { background:#30363D; border-radius:3px; }
+
+  /* ── PowerBI ── */
+  .pbi-intro {
+    background:rgba(144,202,249,0.07);
+    border:1px solid rgba(144,202,249,0.25);
+    border-radius:14px; padding:16px 20px; margin-bottom:16px;
+  }
+  .pbi-intro h3 { color:#90CAF9; font-size:14px; font-weight:800; margin-bottom:6px; }
+  .pbi-intro p { color:#B0BEC5; font-size:12px; line-height:1.7; }
+  .metric-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(300px,1fr)); gap:10px; }
+  .metric-item { background:rgba(255,255,255,0.06); border-radius:8px; padding:10px 12px; }
+  .metric-title { font-weight:700; color:#fff; font-size:12px; margin-bottom:6px; }
+  .metric-query {
+    font-family:'JetBrains Mono',monospace;
+    color:#A5D6A7;
+    font-size:9.5px;
+    background:rgba(0,0,0,0.3);
+    border-radius:4px;
+    padding:6px 8px;
+    line-height:1.65;
+  }
+
+  /* ── Data Flow ── */
+  .flow-item {
+    background:var(--card);
+    border-radius:14px;
+    padding:20px 22px;
+    margin-bottom:14px;
+    display:grid;
+    grid-template-columns:1fr 200px;
+    gap:18px;
+    align-items:start;
+    border:1px solid var(--border);
+    transition: border-color 0.2s;
+  }
+  .flow-item:hover { border-color: rgba(255,255,255,0.22); }
+  .flow-step-head { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+  .flow-icon { font-size:22px; }
+  .flow-title { font-weight:800; font-size:14px; }
+  .flow-desc { color:#B0BEC5; font-size:12px; line-height:1.7; }
+  .flow-tags { display:flex; flex-direction:column; gap:6px; }
+  .flow-tag {
+    border-radius:6px;
+    padding:4px 10px;
+    font-size:10px;
+    color:#E0E0E0;
+    font-weight:500;
+  }
+
+  /* ── Footer ── */
+  footer {
+    text-align:center;
+    padding:24px;
+    color:var(--muted);
+    font-size:11px;
+    font-family:'JetBrains Mono',monospace;
+    border-top:1px solid var(--border);
+    margin-top:10px;
+  }
+
+  /* ── Animations ── */
+  @keyframes fadeDown {
+    from { opacity:0; transform:translateY(-18px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(14px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+
+  /* Responsive */
+  @media(max-width:700px) {
+    .rel-grid, .flow-item { grid-template-columns:1fr; }
+    .er-canvas { height:auto; min-height:900px; }
+    .tbl { width:90%; left:5% !important; }
+    #tbl-onboarding { top:420px !important; }
+    #tbl-offboarding { top:800px !important; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="badge">POSTGRESQL · ER DIAGRAM · HR SYSTEM</div>
+  <h1>Employee Onboarding &amp; Offboarding</h1>
+  <p class="subtitle">Email-parsed pipeline → AI Agent → PostgreSQL → PowerBI Dashboard</p>
+</header>
+
+<!-- TABS -->
+<nav class="tabs">
+  <button class="tab-btn active" data-tab="overview">📐 Overview</button>
+  <button class="tab-btn" data-tab="indexes">🗂 Indexes &amp; Keys</button>
+  <button class="tab-btn" data-tab="sqldll">📄 SQL DDL</button>
+  <button class="tab-btn" data-tab="powerbi">📊 PowerBI Metrics</button>
+  <button class="tab-btn" data-tab="dataflow">🔄 Data Flow</button>
+</nav>
+
+<!-- ══════════════════════════════════════
+     PANEL 1: OVERVIEW (ER Diagram)
+═══════════════════════════════════════ -->
+<div id="panel-overview" class="panel active">
+  <div class="er-wrap">
+    <div class="er-canvas" id="erCanvas">
+
+      <!-- SVG Relationships -->
+      <svg class="er-svg" viewBox="0 0 1020 760" preserveAspectRatio="none">
+        <defs>
+          <marker id="arr-g" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#2E7D32"/>
+          </marker>
+          <marker id="arr-r" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#C62828"/>
+          </marker>
+          <!-- Crow's foot many -->
+          <marker id="crow-g" markerWidth="12" markerHeight="12" refX="1" refY="6" orient="auto">
+            <path d="M11,1 L1,6 L11,11 M11,6 L1,6" stroke="#2E7D32" stroke-width="1.5" fill="none"/>
+          </marker>
+          <marker id="crow-r" markerWidth="12" markerHeight="12" refX="1" refY="6" orient="auto">
+            <path d="M11,1 L1,6 L11,11 M11,6 L1,6" stroke="#C62828" stroke-width="1.5" fill="none"/>
+          </marker>
+        </defs>
+
+        <!-- EMPLOYEE → ONBOARDING -->
+        <path d="M430,338 L430,360 L175,360 L175,375"
+          fill="none" stroke="#2E7D32" stroke-width="2.2" stroke-dasharray="8,5"
+          marker-end="url(#arr-g)" marker-start="url(#crow-g)"/>
+        <!-- ONE tick on employee side -->
+        <line x1="430" y1="342" x2="430" y2="326" stroke="#2E7D32" stroke-width="2"/>
+        <line x1="422" y1="328" x2="438" y2="328" stroke="#2E7D32" stroke-width="2"/>
+        <!-- Label -->
+        <rect x="326" y="352" width="138" height="17" rx="8" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1"/>
+        <text x="395" y="364" text-anchor="middle" fill="#2E7D32" font-size="9" font-weight="700" font-family="JetBrains Mono,monospace">1 : N  has onboarding</text>
+
+        <!-- EMPLOYEE → OFFBOARDING -->
+        <path d="M620,338 L620,360 L840,360 L840,375"
+          fill="none" stroke="#C62828" stroke-width="2.2" stroke-dasharray="8,5"
+          marker-end="url(#arr-r)" marker-start="url(#crow-r)"/>
+        <line x1="620" y1="342" x2="620" y2="326" stroke="#C62828" stroke-width="2"/>
+        <line x1="612" y1="328" x2="628" y2="328" stroke="#C62828" stroke-width="2"/>
+        <!-- Label -->
+        <rect x="620" y="352" width="146" height="17" rx="8" fill="#FFF3E0" stroke="#C62828" stroke-width="1"/>
+        <text x="693" y="364" text-anchor="middle" fill="#C62828" font-size="9" font-weight="700" font-family="JetBrains Mono,monospace">1 : N  has offboarding</text>
+
+        <!-- Cardinality callouts -->
+        <text x="436" y="322" fill="#2E7D32" font-size="10" font-weight="800" font-family="JetBrains Mono,monospace">1</text>
+        <text x="170" y="398" fill="#2E7D32" font-size="10" font-weight="800" font-family="JetBrains Mono,monospace">N</text>
+        <text x="626" y="322" fill="#C62828" font-size="10" font-weight="800" font-family="JetBrains Mono,monospace">1</text>
+        <text x="843" y="398" fill="#C62828" font-size="10" font-weight="800" font-family="JetBrains Mono,monospace">N</text>
+      </svg>
+
+      <!-- ── EMPLOYEE TABLE ── -->
+      <div class="tbl" id="tbl-employee" data-table="employee"
+           style="left:355px; top:22px; border:2.5px solid #D4A017;">
+        <div class="tbl-header" style="background:#D4A017;">
+          <span>👤</span><span>EMPLOYEE</span>
+          <span style="margin-left:auto;font-size:9px;opacity:0.8;">Master Table</span>
+        </div>
+        <div class="col-header-row"><span>CONSTRAINT</span><span>COLUMN</span><span>TYPE</span></div>
+        <div class="col-row"><span class="col-badge badge-pk">PK</span><span class="col-name pk">employee_id</span><span class="col-type">INTEGER</span></div>
+        <div class="col-row"><span class="col-badge badge-nn">NOT NULL</span><span class="col-name">email</span><span class="col-type">VARCHAR(255)</span></div>
+        <div class="col-row"><span class="col-badge badge-null">NULL</span><span class="col-name">phone_number</span><span class="col-type">VARCHAR(25)</span></div>
+        <div class="col-row"><span class="col-badge badge-null">NULL</span><span class="col-name">business_unit</span><span class="col-type">VARCHAR(100)</span></div>
+        <div class="col-row"><span class="col-badge badge-nn">NOT NULL</span><span class="col-name">full_name</span><span class="col-type">VARCHAR(200)</span></div>
+        <div class="col-row"><span class="col-badge badge-null">NULL</span><span class="col-name">department</span><span class="col-type">VARCHAR(100)</span></div>
+        <div class="col-row"><span class="col-badge badge-null">NULL</span><span class="col-name">manager</span><span class="col-type">VARCHAR(200)</span></div>
+        <div class="col-row"><span class="col-badge badge-nn">NOT NULL</span><span class="col-name">status</span><span class="col-type">ENUM</span></div>
+        <div class="col-row"><span class="col-badge badge-nn">NOT NULL</span><span class="col-name">created_date</span><span class="col-type">DATETIME</span></div>
+        <div class="col-row"><span class="col-badge badge-nn">NOT NULL</span><span class="col-name">updated_date</span><span class="col-type">DATETIME</span></div>
+      </div>
+
+      <!-- ── ONBOARDING TABLE ── -->
+      <div class="tbl" id="tbl-onboarding" data-table="onboarding"
+           style="left:22px; top:375px; border:2.5px solid #2E7D32;">
+        <div class="tbl-header" style="background:#2E7D32;">
+          <span>🟢</span><span>ONBOARDING</span>
+          <span style="margin-left:auto;font-size:9px;opacity:0.8;">Child Event</span>
+        </div>
+        <div class="col-header-row"><span>CONSTRAINT</span><span>COLUMN</span><span>TYPE</span></div>
+        <div class="col-row"><span class="col-badge badge-pk">PK</span><span class="col-name pk">id</span><span class="col-type">INTEGER</span></div>
+        <div class="col-row"><span class="col-badge badge-fk">FK NOT NULL</span><span class="col-name fk">employee_id</span><span class="col-type">INTEGER</span></div>
+        <div class="col-row"><span class="col-badge badge-null">NULL</span><span class="col-name">ctoolid</span><span class="col-type">INTEGER</span></div>
+        <div class="col-row"><span class="col-badge badge-nn">NOT NULL</span><span class="col-name">sender_mail</span><span class="col-type">VARCHAR(255)</span></div>
+        <div class="col-row"><span class="col-badge badge-null">NULL</span><span class="col-name">role_name</span><span class="col-type">VARCHAR(150)</span></div>
+        <div class="col-row"><span class="col-badge badge-null">NULL</span><span class="col-name">jd</span><span class="col-type">TEXT</span></div>
+        <div class="col-row"><span class="col-badge badge-null">NULL</span><span class="col-name">location</span><span class="col-type">VARCHAR(150)</span></div>
+        <div class="col-row"><span class="col-badge badge-null">NULL</span><span class="col-name">onboarding_date</span><span class="col-type">DATE</span></div>
+        <div class="col-row"><span class="col-badge badge-null">NULL</span><span class="col-name">experience</span><span class="col-type">VARCHAR(50)</span></div>
+        <div class="col-row"><span class="col-badge badge-nn">NOT NULL</span><span class="col-name">created_date</span><span class="col-type">DATETIME</span></div>
+      </div>
+
+      <!-- ── OFFBOARDING TABLE ── -->
+      <div class="tbl" id="tbl-offboarding" data-table="offboarding"
+           style="left:688px; top:375px; border:2.5px solid #C62828;">
+        <div class="tbl-header" style="background:#C62828;">
+          <span>🔴</span><span>OFFBOARDING</span>
+          <span style="margin-left:auto;font-size:9px;opacity:0.8;">Child Event</span>
+        </div>
+        <div class="col-header-row"><span>CONSTRAINT</span><span>COLUMN</span><span>TYPE</span></div>
+        <div class="col-row"><span class="col-badge badge-pk">PK</span><span class="col-name pk">id</span><span class="col-type">INTEGER</span></div>
+        <div class="col-row"><span class="col-badge badge-fk">FK NOT NULL</span><span class="col-name fk">employee_id</span><span class="col-type">INTEGER</span></div>
+        <div class="col-row"><span class="col-badge badge-null">NULL</span><span class="col-name">ctoolid</span><span class="col-type">INTEGER</span></div>
+        <div class="col-row"><span class="col-badge badge-nn">NOT NULL</span><span class="col-name">sender_mail</span><span class="col-type">VARCHAR(255)</span></div>
+        <div class="col-row"><span class="col-badge badge-null">NULL</span><span class="col-name">role_name</span><span class="col-type">VARCHAR(150)</span></div>
+        <div class="col-row"><span class="col-badge badge-null">NULL</span><span class="col-name">offboarding_date</span><span class="col-type">DATE</span></div>
+        <div class="col-row"><span class="col-badge badge-nn">NOT NULL</span><span class="col-name">created_date</span><span class="col-type">DATETIME</span></div>
+      </div>
+
+      <!-- Legend -->
+      <div class="er-legend">
+        <h4>LEGEND</h4>
+        <div class="legend-row"><span class="col-badge badge-pk" style="font-size:8px;">PK</span> Primary Key</div>
+        <div class="legend-row"><span class="col-badge badge-fk" style="font-size:8px;">FK</span> Foreign Key</div>
+        <div class="legend-row"><span class="col-badge badge-nn" style="font-size:8px;">NN</span> Not Null</div>
+        <div class="legend-row"><span class="col-badge badge-null" style="font-size:8px;">NULL</span> Optional</div>
+        <div class="legend-row" style="margin-top:6px;border-top:1px solid #eee;padding-top:6px;">
+          <span style="color:#2E7D32;font-weight:800;">──▶</span>&nbsp;1:N Relationship
+        </div>
+        <div style="color:#888;font-size:9px;margin-top:4px;">Click table to inspect</div>
+      </div>
+
+    </div><!-- /er-canvas -->
+  </div><!-- /er-wrap -->
+
+  <!-- Column detail -->
+  <div class="detail-panel" id="detailPanel" style="display:none;">
+    <div class="detail-card" id="detailCard">
+      <h3 id="detailTitle"></h3>
+      <div class="col-grid" id="detailGrid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PANEL 2: INDEXES & KEYS
+═══════════════════════════════════════ -->
+<div id="panel-indexes" class="panel">
+<div class="section-wrap">
+
+  <!-- EMPLOYEE -->
+  <div class="section-card" style="border-color:rgba(212,160,23,0.35);">
+    <h3 style="color:#D4A017;">👤 EMPLOYEE — Indexes</h3>
+    <div class="idx-grid">
+      <div class="idx-item" style="border-color:rgba(212,160,23,0.35);">
+        <div class="idx-top"><span class="idx-name">PRIMARY</span><span class="idx-unique">UNIQUE</span></div>
+        <div class="idx-cols">Columns: employee_id</div>
+        <div class="idx-type">Type: BTREE &nbsp;|&nbsp; Clustered: YES</div>
+      </div>
+      <div class="idx-item" style="border-color:rgba(212,160,23,0.35);">
+        <div class="idx-top"><span class="idx-name">idx_employee_email</span><span class="idx-unique">UNIQUE</span></div>
+        <div class="idx-cols">Columns: email</div>
+        <div class="idx-type">Type: BTREE &nbsp;|&nbsp; Used for AI agent lookup</div>
+      </div>
+      <div class="idx-item">
+        <div class="idx-top"><span class="idx-name">idx_employee_status</span></div>
+        <div class="idx-cols">Columns: status</div>
+        <div class="idx-type">Type: BTREE &nbsp;|&nbsp; Dashboard filtering</div>
+      </div>
+      <div class="idx-item">
+        <div class="idx-top"><span class="idx-name">idx_employee_dept</span></div>
+        <div class="idx-cols">Columns: department</div>
+        <div class="idx-type">Type: BTREE &nbsp;|&nbsp; Group-by aggregations</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ONBOARDING -->
+  <div class="section-card" style="border-color:rgba(46,125,50,0.35);">
+    <h3 style="color:#2E7D32;">🟢 ONBOARDING — Indexes</h3>
+    <div class="idx-grid">
+      <div class="idx-item" style="border-color:rgba(46,125,50,0.35);">
+        <div class="idx-top"><span class="idx-name">PRIMARY</span><span class="idx-unique">UNIQUE</span></div>
+        <div class="idx-cols">Columns: id</div>
+        <div class="idx-type">Type: BTREE &nbsp;|&nbsp; Clustered: YES</div>
+      </div>
+      <div class="idx-item">
+        <div class="idx-top"><span class="idx-name">idx_onboarding_emp</span></div>
+        <div class="idx-cols">Columns: employee_id (FK)</div>
+        <div class="idx-type">Type: BTREE &nbsp;|&nbsp; JOIN performance</div>
+      </div>
+      <div class="idx-item">
+        <div class="idx-top"><span class="idx-name">idx_onboarding_date</span></div>
+        <div class="idx-cols">Columns: onboarding_date</div>
+        <div class="idx-type">Type: BTREE &nbsp;|&nbsp; Time-series PowerBI</div>
+      </div>
+      <div class="idx-item">
+        <div class="idx-top"><span class="idx-name">idx_onboarding_role</span></div>
+        <div class="idx-cols">Columns: role_name</div>
+        <div class="idx-type">Type: BTREE &nbsp;|&nbsp; Role aggregations</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OFFBOARDING -->
+  <div class="section-card" style="border-color:rgba(198,40,40,0.35);">
+    <h3 style="color:#C62828;">🔴 OFFBOARDING — Indexes</h3>
+    <div class="idx-grid">
+      <div class="idx-item" style="border-color:rgba(198,40,40,0.35);">
+        <div class="idx-top"><span class="idx-name">PRIMARY</span><span class="idx-unique">UNIQUE</span></div>
+        <div class="idx-cols">Columns: id</div>
+        <div class="idx-type">Type: BTREE &nbsp;|&nbsp; Clustered: YES</div>
+      </div>
+      <div class="idx-item">
+        <div class="idx-top"><span class="idx-name">idx_offboarding_emp</span></div>
+        <div class="idx-cols">Columns: employee_id (FK)</div>
+        <div class="idx-type">Type: BTREE &nbsp;|&nbsp; JOIN performance</div>
+      </div>
+      <div class="idx-item">
+        <div class="idx-top"><span class="idx-name">idx_offboarding_date</span></div>
+        <div class="idx-cols">Columns: offboarding_date</div>
+        <div class="idx-type">Type: BTREE &nbsp;|&nbsp; Attrition timelines</div>
+      </div>
+      <div class="idx-item">
+        <div class="idx-top"><span class="idx-name">idx_offboarding_role</span></div>
+        <div class="idx-cols">Columns: role_name</div>
+        <div class="idx-type">Type: BTREE &nbsp;|&nbsp; Exit role analysis</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FK Constraints -->
+  <div class="section-card">
+    <h3 style="color:#90CAF9;">🔗 Foreign Key Constraints</h3>
+    <div class="rel-grid">
+      <div class="rel-item">
+        <div class="rel-name">ONBOARDING.employee_id<br/>→ EMPLOYEE.employee_id</div>
+        <div class="rel-detail">
+          Cardinality: <span style="color:#90CAF9;">N : 1</span><br/>
+          ON DELETE: <span style="color:#EF9A9A;">CASCADE</span><br/>
+          ON UPDATE: <span style="color:#A5D6A7;">CASCADE</span><br/>
+          Index: <span style="color:#FFF9C4;">idx_onboarding_emp</span>
+        </div>
+      </div>
+      <div class="rel-item">
+        <div class="rel-name">OFFBOARDING.employee_id<br/>→ EMPLOYEE.employee_id</div>
+        <div class="rel-detail">
+          Cardinality: <span style="color:#90CAF9;">N : 1</span><br/>
+          ON DELETE: <span style="color:#EF9A9A;">CASCADE</span><br/>
+          ON UPDATE: <span style="color:#A5D6A7;">CASCADE</span><br/>
+          Index: <span style="color:#FFF9C4;">idx_offboarding_emp</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PANEL 3: SQL DDL
+═══════════════════════════════════════ -->
+<div id="panel-sqldll" class="panel">
+<div class="section-wrap">
+  <div class="sql-card">
+    <div class="sql-topbar">
+      <span class="sql-filename">📄 complete_schema.sql — PostgreSQL 15+</span>
+      <button class="copy-btn" id="copyBtn" onclick="copySQL()">📋 Copy SQL</button>
+    </div>
+    <pre id="sqlCode">-- ============================================================
+-- PostgreSQL DDL — Employee HR System
+-- Email-parsed data pipeline for AI Agent + PowerBI
+-- ============================================================
+
+CREATE TABLE employee (
+  employee_id   SERIAL          PRIMARY KEY,
+  email         VARCHAR(255)    NOT NULL UNIQUE,
+  phone_number  VARCHAR(25),
+  business_unit VARCHAR(100),
+  full_name     VARCHAR(200)    NOT NULL,
+  department    VARCHAR(100),
+  manager       VARCHAR(200),
+  status        VARCHAR(10)     NOT NULL
+                  CHECK (status IN ('active', 'inactive'))
+                  DEFAULT 'active',
+  created_date  TIMESTAMP       NOT NULL DEFAULT NOW(),
+  updated_date  TIMESTAMP       NOT NULL DEFAULT NOW()
+);
+
+-- Indexes on EMPLOYEE
+CREATE UNIQUE INDEX idx_employee_email
+  ON employee (email);
+
+CREATE INDEX idx_employee_status
+  ON employee (status);
+
+CREATE INDEX idx_employee_dept
+  ON employee (department);
+
+-- ============================================================
+
+CREATE TABLE onboarding (
+  id              SERIAL          PRIMARY KEY,
+  employee_id     INTEGER         NOT NULL
+    REFERENCES employee (employee_id)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  ctoolid         INTEGER,
+  sender_mail     VARCHAR(255)    NOT NULL,
+  role_name       VARCHAR(150),
+  jd              TEXT,
+  location        VARCHAR(150),
+  onboarding_date DATE,
+  experience      VARCHAR(50),
+  created_date    TIMESTAMP       NOT NULL DEFAULT NOW()
+);
+
+-- Indexes on ONBOARDING
+CREATE INDEX idx_onboarding_emp
+  ON onboarding (employee_id);
+
+CREATE INDEX idx_onboarding_date
+  ON onboarding (onboarding_date);
+
+CREATE INDEX idx_onboarding_role
+  ON onboarding (role_name);
+
+-- ============================================================
+
+CREATE TABLE offboarding (
+  id               SERIAL          PRIMARY KEY,
+  employee_id      INTEGER         NOT NULL
+    REFERENCES employee (employee_id)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  ctoolid          INTEGER,
+  sender_mail      VARCHAR(255)    NOT NULL,
+  role_name        VARCHAR(150),
+  offboarding_date DATE,
+  created_date     TIMESTAMP       NOT NULL DEFAULT NOW()
+);
+
+-- Indexes on OFFBOARDING
+CREATE INDEX idx_offboarding_emp
+  ON offboarding (employee_id);
+
+CREATE INDEX idx_offboarding_date
+  ON offboarding (offboarding_date);
+
+CREATE INDEX idx_offboarding_role
+  ON offboarding (role_name);
+
+-- ============================================================
+-- Auto-update trigger: updated_date on employee
+-- ============================================================
+CREATE OR REPLACE FUNCTION fn_update_timestamp()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_date = NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_employee_updated
+  BEFORE UPDATE ON employee
+  FOR EACH ROW EXECUTE FUNCTION fn_update_timestamp();
+
+-- ============================================================
+-- Useful VIEW for PowerBI DirectQuery
+-- ============================================================
+CREATE OR REPLACE VIEW vw_employee_lifecycle AS
+SELECT
+  e.employee_id,
+  e.full_name,
+  e.email,
+  e.department,
+  e.business_unit,
+  e.manager,
+  e.status,
+  o.onboarding_date,
+  o.role_name        AS onboarding_role,
+  o.location         AS work_location,
+  o.experience,
+  off.offboarding_date,
+  off.role_name      AS offboarding_role,
+  CASE
+    WHEN off.offboarding_date IS NOT NULL
+    THEN (off.offboarding_date - o.onboarding_date)
+  END                AS tenure_days
+FROM employee e
+LEFT JOIN onboarding  o   ON o.employee_id  = e.employee_id
+LEFT JOIN offboarding off ON off.employee_id = e.employee_id;
+</pre>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PANEL 4: POWERBI METRICS
+═══════════════════════════════════════ -->
+<div id="panel-powerbi" class="panel">
+<div class="section-wrap">
+
+  <div class="pbi-intro">
+    <h3>📊 Recommended PowerBI Dashboard Architecture</h3>
+    <p>Connect PowerBI to PostgreSQL via <strong style="color:#fff;">DirectQuery</strong> or <strong style="color:#fff;">Import</strong> mode.
+    Use the <code style="color:#A5D6A7;">vw_employee_lifecycle</code> view as the base dataset.
+    Create calculated measures in DAX. Recommended: 3 report pages — Onboarding, Offboarding, Executive Summary.</p>
+  </div>
+
+  <!-- Onboarding KPIs -->
+  <div class="section-card" style="border-color:rgba(46,125,50,0.4);">
+    <h3 style="color:#4CAF50;">🟢 Onboarding KPIs — Page 1</h3>
+    <div class="metric-grid">
+      <div class="metric-item">
+        <div class="metric-title">📌 Total Onboarded (MTD / YTD)</div>
+        <div class="metric-query">COUNT(*) FROM onboarding
+GROUP BY DATE_TRUNC('month', onboarding_date)</div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-title">📌 Avg Time to Onboard (Days)</div>
+        <div class="metric-query">AVG(o.onboarding_date - e.created_date)
+FROM onboarding o
+JOIN employee e USING(employee_id)</div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-title">📌 Onboarding by Department</div>
+        <div class="metric-query">COUNT(*), e.department
+FROM onboarding o JOIN employee e USING(employee_id)
+GROUP BY e.department ORDER BY 1 DESC</div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-title">📌 Onboarding by Location</div>
+        <div class="metric-query">COUNT(*), location
+FROM onboarding
+GROUP BY location ORDER BY 1 DESC</div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-title">📌 Top Roles Being Hired</div>
+        <div class="metric-query">COUNT(*), role_name
+FROM onboarding
+GROUP BY role_name ORDER BY 1 DESC LIMIT 10</div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-title">📌 Experience Distribution</div>
+        <div class="metric-query">COUNT(*), experience
+FROM onboarding
+GROUP BY experience</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Offboarding KPIs -->
+  <div class="section-card" style="border-color:rgba(198,40,40,0.4);">
+    <h3 style="color:#EF9A9A;">🔴 Offboarding KPIs — Page 2</h3>
+    <div class="metric-grid">
+      <div class="metric-item">
+        <div class="metric-title">📌 Total Offboarded (MTD / YTD)</div>
+        <div class="metric-query">COUNT(*) FROM offboarding
+GROUP BY DATE_TRUNC('month', offboarding_date)</div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-title">📌 Attrition Rate %</div>
+        <div class="metric-query">-- DAX measure
+DIVIDE([Offboarded Count], [Active Employees], 0) * 100</div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-title">📌 Avg Employee Tenure (Days)</div>
+        <div class="metric-query">AVG(off.offboarding_date - o.onboarding_date)
+FROM offboarding off
+JOIN onboarding o USING(employee_id)</div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-title">📌 Offboarding by Department</div>
+        <div class="metric-query">COUNT(*), e.department
+FROM offboarding off JOIN employee e USING(employee_id)
+GROUP BY e.department</div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-title">📌 Role-wise Exit Analysis</div>
+        <div class="metric-query">COUNT(*), role_name
+FROM offboarding
+GROUP BY role_name ORDER BY 1 DESC</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Executive Summary -->
+  <div class="section-card" style="border-color:rgba(212,160,23,0.4);">
+    <h3 style="color:#D4A017;">📈 Executive Summary — Page 3</h3>
+    <div class="metric-grid">
+      <div class="metric-item">
+        <div class="metric-title">📌 Active vs Inactive Headcount</div>
+        <div class="metric-query">COUNT(*), status FROM employee GROUP BY status</div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-title">📌 Headcount by Business Unit</div>
+        <div class="metric-query">COUNT(*), business_unit
+FROM employee WHERE status='active'
+GROUP BY business_unit</div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-title">📌 Manager Span of Control</div>
+        <div class="metric-query">COUNT(employee_id), manager
+FROM employee WHERE status='active'
+GROUP BY manager ORDER BY 1 DESC</div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-title">📌 Net Headcount (Hires − Exits)</div>
+        <div class="metric-query">-- DAX: Net HC per month
+[Onboarded MTD] - [Offboarded MTD]</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PANEL 5: DATA FLOW
+═══════════════════════════════════════ -->
+<div id="panel-dataflow" class="panel">
+<div class="section-wrap">
+
+  <div class="flow-item" style="border-color:rgba(92,107,192,0.4);">
+    <div>
+      <div class="flow-step-head">
+        <span class="flow-icon">📧</span>
+        <span class="flow-title" style="color:#7986CB;">Step 1 — Email Ingestion</span>
+      </div>
+      <p class="flow-desc">Emails arrive from HR systems (onboarding confirmations, exit notices, welcome emails). Raw email data including sender, subject, body, attachments is captured and queued for processing.</p>
+    </div>
+    <div class="flow-tags">
+      <div class="flow-tag" style="background:rgba(92,107,192,0.2);border:1px solid rgba(92,107,192,0.4);">✓ SMTP / IMAP capture</div>
+      <div class="flow-tag" style="background:rgba(92,107,192,0.2);border:1px solid rgba(92,107,192,0.4);">✓ sender_mail extracted</div>
+      <div class="flow-tag" style="background:rgba(92,107,192,0.2);border:1px solid rgba(92,107,192,0.4);">✓ Subject classification</div>
+      <div class="flow-tag" style="background:rgba(92,107,192,0.2);border:1px solid rgba(92,107,192,0.4);">✓ Attachment parsing</div>
+    </div>
+  </div>
+
+  <div class="flow-item" style="border-color:rgba(123,31,162,0.4);">
+    <div>
+      <div class="flow-step-head">
+        <span class="flow-icon">🤖</span>
+        <span class="flow-title" style="color:#CE93D8;">Step 2 — AI Agent Processing</span>
+      </div>
+      <p class="flow-desc">AI agent classifies email type (onboarding vs offboarding), performs named-entity extraction for employee name, role, department, dates, and matches to existing employee via email lookup on the EMPLOYEE table.</p>
+    </div>
+    <div class="flow-tags">
+      <div class="flow-tag" style="background:rgba(123,31,162,0.2);border:1px solid rgba(123,31,162,0.4);">✓ Email classification NLP</div>
+      <div class="flow-tag" style="background:rgba(123,31,162,0.2);border:1px solid rgba(123,31,162,0.4);">✓ Entity extraction</div>
+      <div class="flow-tag" style="background:rgba(123,31,162,0.2);border:1px solid rgba(123,31,162,0.4);">✓ Employee ID resolution</div>
+      <div class="flow-tag" style="background:rgba(123,31,162,0.2);border:1px solid rgba(123,31,162,0.4);">✓ Confidence scoring</div>
+    </div>
+  </div>
+
+  <div class="flow-item" style="border-color:rgba(21,101,192,0.4);">
+    <div>
+      <div class="flow-step-head">
+        <span class="flow-icon">🗄️</span>
+        <span class="flow-title" style="color:#90CAF9;">Step 3 — PostgreSQL Storage</span>
+      </div>
+      <p class="flow-desc">Structured data is upserted into the 3-table schema. The EMPLOYEE table acts as the master identity store (keyed by email). ONBOARDING and OFFBOARDING events are inserted as child records with FK linkage.</p>
+    </div>
+    <div class="flow-tags">
+      <div class="flow-tag" style="background:rgba(21,101,192,0.2);border:1px solid rgba(21,101,192,0.4);">✓ UPSERT on email key</div>
+      <div class="flow-tag" style="background:rgba(21,101,192,0.2);border:1px solid rgba(21,101,192,0.4);">✓ FK integrity enforced</div>
+      <div class="flow-tag" style="background:rgba(21,101,192,0.2);border:1px solid rgba(21,101,192,0.4);">✓ Timestamps auto-set</div>
+      <div class="flow-tag" style="background:rgba(21,101,192,0.2);border:1px solid rgba(21,101,192,0.4);">✓ Trigger: updated_date</div>
+    </div>
+  </div>
+
+  <div class="flow-item" style="border-color:rgba(46,125,50,0.4);">
+    <div>
+      <div class="flow-step-head">
+        <span class="flow-icon">📊</span>
+        <span class="flow-title" style="color:#A5D6A7;">Step 4 — PowerBI Dashboard</span>
+      </div>
+      <p class="flow-desc">PowerBI connects via DirectQuery to PostgreSQL using the <code style="color:#A5D6A7;">vw_employee_lifecycle</code> view. Scheduled refresh keeps dashboards current. DAX measures calculate KPIs across Onboarding, Offboarding, and Executive pages.</p>
+    </div>
+    <div class="flow-tags">
+      <div class="flow-tag" style="background:rgba(46,125,50,0.2);border:1px solid rgba(46,125,50,0.4);">✓ Onboarding trends page</div>
+      <div class="flow-tag" style="background:rgba(46,125,50,0.2);border:1px solid rgba(46,125,50,0.4);">✓ Attrition analytics</div>
+      <div class="flow-tag" style="background:rgba(46,125,50,0.2);border:1px solid rgba(46,125,50,0.4);">✓ Headcount drill-down</div>
+      <div class="flow-tag" style="background:rgba(46,125,50,0.2);border:1px solid rgba(46,125,50,0.4);">✓ Manager / dept slicers</div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<footer>
+  3 Tables &nbsp;·&nbsp; 27 Columns &nbsp;·&nbsp; 11 Indexes &nbsp;·&nbsp; 2 FK Constraints &nbsp;·&nbsp; 1 Lifecycle View &nbsp;·&nbsp; PostgreSQL 15+
+</footer>
+
+<script>
+  // ── Tab switching ──
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  // ── Table detail data ──
+  const tableDetails = {
+    employee: {
+      title: '👤 EMPLOYEE — Column Details',
+      color: '#D4A017',
+      cols: [
+        { name:'employee_id', type:'INTEGER / SERIAL', note:'Auto-increment primary key. Clustered index.' },
+        { name:'email', type:'VARCHAR(255)', note:'Unique. Used as natural key by AI agent for employee matching.' },
+        { name:'phone_number', type:'VARCHAR(25)', note:'Optional contact number.' },
+        { name:'business_unit', type:'VARCHAR(100)', note:'Business unit or division name.' },
+        { name:'full_name', type:'VARCHAR(200)', note:'Full employee name. Required field.' },
+        { name:'department', type:'VARCHAR(100)', note:'Department name. Indexed for dashboard grouping.' },
+        { name:'manager', type:'VARCHAR(200)', note:'Manager name. Used for span-of-control metric.' },
+        { name:'status', type:"CHECK IN ('active','inactive')", note:'Account status. Indexed. Default: active.' },
+        { name:'created_date', type:'TIMESTAMP', note:'Record creation timestamp. Auto-set via DEFAULT NOW().' },
+        { name:'updated_date', type:'TIMESTAMP', note:'Auto-updated via trigger fn_update_timestamp().' },
+      ]
+    },
+    onboarding: {
+      title: '🟢 ONBOARDING — Column Details',
+      color: '#2E7D32',
+      cols: [
+        { name:'id', type:'INTEGER / SERIAL', note:'Auto-increment primary key.' },
+        { name:'employee_id', type:'INTEGER (FK)', note:'→ employee.employee_id. CASCADE on delete/update.' },
+        { name:'ctoolid', type:'INTEGER', note:'External tool ID (HRMS / provisioning system).' },
+        { name:'sender_mail', type:'VARCHAR(255)', note:'Email address from which onboarding email was sent.' },
+        { name:'role_name', type:'VARCHAR(150)', note:'Job title / role assigned. Indexed.' },
+        { name:'jd', type:'TEXT', note:'Full job description text extracted from email body.' },
+        { name:'location', type:'VARCHAR(150)', note:'Work location / office. Indexed for location KPIs.' },
+        { name:'onboarding_date', type:'DATE', note:'Employee start date. Indexed for time-series analysis.' },
+        { name:'experience', type:'VARCHAR(50)', note:'Years/level of experience (e.g. 3 years, Senior).' },
+        { name:'created_date', type:'TIMESTAMP', note:'Record creation timestamp.' },
+      ]
+    },
+    offboarding: {
+      title: '🔴 OFFBOARDING — Column Details',
+      color: '#C62828',
+      cols: [
+        { name:'id', type:'INTEGER / SERIAL', note:'Auto-increment primary key.' },
+        { name:'employee_id', type:'INTEGER (FK)', note:'→ employee.employee_id. CASCADE on delete/update.' },
+        { name:'ctoolid', type:'INTEGER', note:'External tool ID for access revocation tracking.' },
+        { name:'sender_mail', type:'VARCHAR(255)', note:'Email address from which exit notice was sent.' },
+        { name:'role_name', type:'VARCHAR(150)', note:'Role at time of exit. Indexed for exit analysis.' },
+        { name:'offboarding_date', type:'DATE', note:'Last working day. Indexed for attrition timelines.' },
+        { name:'created_date', type:'TIMESTAMP', note:'Record creation timestamp.' },
+      ]
+    }
+  };
+
+  // ── Table click handler ──
+  let selectedTable = null;
+  document.querySelectorAll('.tbl').forEach(tbl => {
+    tbl.addEventListener('click', () => {
+      const key = tbl.dataset.table;
+      if (selectedTable === key) {
+        tbl.classList.remove('selected');
+        selectedTable = null;
+        document.getElementById('detailPanel').style.display = 'none';
+        return;
+      }
+      document.querySelectorAll('.tbl').forEach(t => t.classList.remove('selected'));
+      tbl.classList.add('selected');
+      selectedTable = key;
+
+      const data = tableDetails[key];
+      document.getElementById('detailTitle').textContent = data.title;
+      document.getElementById('detailTitle').style.color = data.color;
+      const grid = document.getElementById('detailGrid');
+      grid.innerHTML = data.cols.map(col => `
+        <div class="col-item" style="border-color:${data.color}22;">
+          <div class="col-item-top">
+            <span class="col-item-name">${col.name}</span>
+            <span class="col-item-type">${col.type}</span>
+          </div>
+          <div class="col-item-note">${col.note}</div>
+        </div>
+      `).join('');
+      document.getElementById('detailPanel').style.display = 'block';
+    });
+  });
+
+  // ── Copy SQL ──
+  function copySQL() {
+    const text = document.getElementById('sqlCode').textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.getElementById('copyBtn');
+      btn.textContent = '✅ Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = '📋 Copy SQL';
+        btn.classList.remove('copied');
+      }, 2200);
+    });
+  }
+</script>
+</body>
+</html>
