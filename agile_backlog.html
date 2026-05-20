@@ -1,0 +1,1488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Agile Backlog — HR Email AI System</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --ink: #0E1117;
+  --paper: #F5F3EE;
+  --paper2: #EDEAE2;
+  --gold: #C9971A;
+  --gold-lt: #F5E6BE;
+  --green: #1A7A3C;
+  --green-lt: #D4EDDA;
+  --red: #B5281C;
+  --red-lt: #FAE0DE;
+  --blue: #1A4F8A;
+  --blue-lt: #D6E4F5;
+  --purple: #5E2D8A;
+  --purple-lt: #EAE0F5;
+  --slate: #3D4A5C;
+  --muted: #7A8499;
+  --border: #D4CFC4;
+  --card: #FFFFFF;
+  --shadow: 0 2px 16px rgba(14,17,23,0.08);
+  --shadow-lg: 0 8px 40px rgba(14,17,23,0.14);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Outfit', sans-serif;
+  min-height: 100vh;
+  background-image:
+    radial-gradient(circle at 0% 0%, rgba(201,151,26,0.07) 0%, transparent 50%),
+    radial-gradient(circle at 100% 100%, rgba(26,79,138,0.06) 0%, transparent 50%);
+}
+
+/* ── HEADER ── */
+.page-header {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 48px 40px 36px;
+  position: relative;
+  overflow: hidden;
+}
+.page-header::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 40px,
+    rgba(255,255,255,0.015) 40px,
+    rgba(255,255,255,0.015) 41px
+  );
+  pointer-events: none;
+}
+.header-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(201,151,26,0.15);
+  border: 1px solid rgba(201,151,26,0.4);
+  color: #F5C842;
+  font-size: 10px; font-weight: 700; letter-spacing: 3px;
+  font-family: 'DM Mono', monospace;
+  border-radius: 4px; padding: 5px 14px;
+  margin-bottom: 18px;
+}
+.page-header h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(28px, 4.5vw, 46px);
+  line-height: 1.1;
+  margin-bottom: 10px;
+  color: #fff;
+}
+.page-header h1 em {
+  font-style: italic;
+  color: #F5C842;
+}
+.header-sub {
+  color: #90A0B5;
+  font-size: 13px;
+  font-weight: 400;
+  max-width: 620px;
+  line-height: 1.7;
+  margin-bottom: 28px;
+}
+.header-stats {
+  display: flex; gap: 32px; flex-wrap: wrap;
+}
+.stat-item { }
+.stat-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 26px; font-weight: 600; color: #F5C842;
+  line-height: 1;
+}
+.stat-label { font-size: 11px; color: #5A6A7F; margin-top: 4px; letter-spacing: 0.5px; }
+
+/* ── TECH STACK STRIP ── */
+.tech-strip {
+  background: var(--paper2);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 40px;
+  display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+}
+.tech-label { font-size: 10px; font-weight: 700; color: var(--muted); letter-spacing: 2px; margin-right: 6px; font-family:'DM Mono',monospace; }
+.tech-pill {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 5px 12px;
+  font-size: 11px; font-weight: 600; color: var(--slate);
+  font-family: 'DM Mono', monospace;
+}
+
+/* ── FILTERS ── */
+.controls {
+  padding: 24px 40px 0;
+  display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+}
+.filter-group { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.filter-label { font-size: 10px; font-weight: 700; color: var(--muted); letter-spacing: 1.5px; margin-right: 4px; font-family:'DM Mono',monospace; }
+.filter-btn {
+  padding: 6px 14px; border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--card); color: var(--slate);
+  font-size: 11px; font-weight: 600; font-family: 'Outfit', sans-serif;
+  cursor: pointer; transition: all 0.18s;
+}
+.filter-btn:hover { border-color: var(--gold); color: var(--gold); }
+.filter-btn.active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.search-box {
+  margin-left: auto;
+  display: flex; align-items: center; gap: 8px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 7px 14px;
+}
+.search-box input {
+  border: none; outline: none; background: transparent;
+  font-size: 12px; font-family: 'Outfit', sans-serif;
+  color: var(--ink); width: 180px;
+}
+.search-box input::placeholder { color: var(--muted); }
+
+/* ── EPIC SECTIONS ── */
+.main { padding: 28px 40px 60px; }
+.epic-block { margin-bottom: 36px; }
+.epic-header {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--border);
+}
+.epic-icon { font-size: 22px; }
+.epic-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 20px; color: var(--ink);
+}
+.epic-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px; font-weight: 600;
+  border-radius: 4px; padding: 3px 8px;
+  letter-spacing: 1px;
+}
+.epic-count {
+  margin-left: auto;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; color: var(--muted);
+  background: var(--paper2);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 3px 12px;
+}
+
+/* ── STORY GRID ── */
+.story-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 14px;
+}
+.story-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 20px;
+  box-shadow: var(--shadow);
+  transition: transform 0.18s, box-shadow 0.18s, border-color 0.18s;
+  position: relative;
+  overflow: hidden;
+  cursor: default;
+}
+.story-card::before {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 4px;
+  border-radius: 12px 0 0 12px;
+}
+.story-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  border-color: #C4BDB0;
+}
+.story-card.hidden { display: none; }
+
+/* Accent colors by epic */
+.epic-email .story-card::before { background: var(--gold); }
+.epic-backend .story-card::before { background: var(--blue); }
+.epic-ai .story-card::before { background: var(--purple); }
+.epic-db .story-card::before { background: var(--green); }
+.epic-dashboard .story-card::before { background: var(--red); }
+.epic-infra .story-card::before { background: var(--slate); }
+
+.story-top {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  margin-bottom: 10px;
+}
+.story-id {
+  font-family: 'DM Mono', monospace;
+  font-size: 9.5px; font-weight: 600; color: var(--muted);
+  background: var(--paper2);
+  border-radius: 4px; padding: 2px 7px;
+}
+.priority-badge {
+  font-size: 9px; font-weight: 700;
+  border-radius: 4px; padding: 2px 8px;
+  font-family: 'DM Mono', monospace;
+  letter-spacing: 0.5px;
+}
+.p-critical { background: #FEECEC; color: #B5281C; border: 1px solid #F5C3C0; }
+.p-high { background: #FFF4E0; color: #9A5F00; border: 1px solid #F5DFA8; }
+.p-medium { background: #E8F5E9; color: #1A7A3C; border: 1px solid #BDDDC8; }
+.p-low { background: #EEF2FF; color: #3D4FA0; border: 1px solid #C3CCEE; }
+
+.story-title {
+  font-size: 14px; font-weight: 700; color: var(--ink);
+  line-height: 1.4; margin-bottom: 8px;
+}
+.story-desc {
+  font-size: 12px; color: #4A5568; line-height: 1.65;
+  margin-bottom: 12px;
+}
+.story-footer {
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 8px;
+}
+.tech-tags { display: flex; gap: 4px; flex-wrap: wrap; }
+.tech-tag {
+  font-size: 9px; font-weight: 600; font-family: 'DM Mono', monospace;
+  border-radius: 4px; padding: 2px 6px;
+  background: var(--paper2); color: var(--slate);
+  border: 1px solid var(--border);
+}
+.story-points {
+  display: flex; align-items: center; gap: 4px;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; font-weight: 600; color: var(--muted);
+}
+.sp-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: currentColor; opacity: 0.5;
+}
+
+/* Sprint badge */
+.sprint-badge {
+  font-size: 9px; font-weight: 700; font-family: 'DM Mono', monospace;
+  border-radius: 4px; padding: 2px 7px; letter-spacing: 0.5px;
+  border: 1px dashed var(--border); color: var(--muted);
+  margin-top: 8px; display: inline-block;
+}
+
+/* Acceptance criteria toggle */
+.ac-toggle {
+  font-size: 10px; font-weight: 600; color: var(--gold);
+  cursor: pointer; margin-top: 10px; display: inline-flex;
+  align-items: center; gap: 4px; text-decoration: none;
+  font-family: 'DM Mono', monospace;
+  border: none; background: none; padding: 0;
+}
+.ac-toggle:hover { color: var(--ink); }
+.ac-content {
+  display: none;
+  margin-top: 10px;
+  padding: 10px 12px;
+  background: var(--paper);
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+.ac-content.open { display: block; }
+.ac-content ul {
+  list-style: none; padding: 0;
+}
+.ac-content li {
+  font-size: 11px; color: var(--slate); line-height: 1.6;
+  padding-left: 14px; position: relative; margin-bottom: 2px;
+}
+.ac-content li::before {
+  content: '✓'; position: absolute; left: 0;
+  color: var(--green); font-weight: 700; font-size: 10px;
+}
+
+/* ── SPRINT SUMMARY ── */
+.sprint-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+  margin-bottom: 28px;
+}
+.sprint-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 18px;
+  box-shadow: var(--shadow);
+}
+.sprint-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px; font-weight: 700; color: var(--muted);
+  letter-spacing: 2px; margin-bottom: 4px;
+}
+.sprint-name {
+  font-weight: 700; font-size: 13px; color: var(--ink);
+  margin-bottom: 6px;
+}
+.sprint-pts {
+  font-family: 'DM Mono', monospace;
+  font-size: 20px; font-weight: 600; color: var(--gold);
+}
+.sprint-pts-label { font-size: 10px; color: var(--muted); }
+.sprint-bar {
+  height: 4px; background: var(--paper2);
+  border-radius: 4px; margin-top: 10px; overflow: hidden;
+}
+.sprint-bar-fill { height: 100%; border-radius: 4px; background: var(--gold); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.epic-block { animation: fadeIn 0.4s ease both; }
+.epic-block:nth-child(1) { animation-delay: 0.05s; }
+.epic-block:nth-child(2) { animation-delay: 0.10s; }
+.epic-block:nth-child(3) { animation-delay: 0.15s; }
+.epic-block:nth-child(4) { animation-delay: 0.20s; }
+.epic-block:nth-child(5) { animation-delay: 0.25s; }
+.epic-block:nth-child(6) { animation-delay: 0.30s; }
+
+/* Responsive */
+@media(max-width: 700px) {
+  .page-header, .tech-strip, .controls, .main { padding-left: 20px; padding-right: 20px; }
+  .header-stats { gap: 20px; }
+  .controls { flex-direction: column; align-items: flex-start; }
+  .search-box { margin-left: 0; }
+  .rel-grid { grid-template-columns: 1fr; }
+}
+
+/* No results */
+.no-results {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px;
+  color: var(--muted);
+  font-size: 14px;
+  display: none;
+}
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header class="page-header">
+  <div class="header-eyebrow">AGILE BACKLOG · HR EMAIL AI SYSTEM</div>
+  <h1>Product Backlog —<br/><em>Employee Lifecycle Platform</em></h1>
+  <p class="header-sub">
+    End-to-end pipeline: email ingestion → AI extraction → PostgreSQL storage → PowerBI dashboards.
+    Organized by Epic across 6 Sprints using Scrum methodology.
+  </p>
+  <div class="header-stats">
+    <div class="stat-item"><div class="stat-num">6</div><div class="stat-label">Epics</div></div>
+    <div class="stat-item"><div class="stat-num">36</div><div class="stat-label">User Stories</div></div>
+    <div class="stat-item"><div class="stat-num">6</div><div class="stat-label">Sprints (2-week)</div></div>
+    <div class="stat-item"><div class="stat-num">~3</div><div class="stat-label">Months Timeline</div></div>
+    <div class="stat-item"><div class="stat-num">228</div><div class="stat-label">Story Points</div></div>
+  </div>
+</header>
+
+<!-- ── TECH STACK ── -->
+<div class="tech-strip">
+  <span class="tech-label">STACK</span>
+  <span class="tech-pill">☕ Java Spring Boot</span>
+  <span class="tech-pill">🐘 PostgreSQL</span>
+  <span class="tech-pill">🐍 Python</span>
+  <span class="tech-pill">🤖 Agentic AI</span>
+  <span class="tech-pill">📊 PowerBI</span>
+  <span class="tech-pill">🧠 Claude API (claude-sonnet-4-20250514)</span>
+</div>
+
+<!-- ── FILTERS ── -->
+<div class="controls">
+  <div class="filter-group">
+    <span class="filter-label">EPIC</span>
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="epic-email">📧 Email</button>
+    <button class="filter-btn" data-filter="epic-backend">☕ Backend</button>
+    <button class="filter-btn" data-filter="epic-ai">🤖 AI Agent</button>
+    <button class="filter-btn" data-filter="epic-db">🐘 Database</button>
+    <button class="filter-btn" data-filter="epic-dashboard">📊 PowerBI</button>
+    <button class="filter-btn" data-filter="epic-infra">⚙️ Infra</button>
+  </div>
+  <div class="filter-group" style="margin-left:12px;">
+    <span class="filter-label">PRIORITY</span>
+    <button class="filter-btn" data-priority="CRITICAL">🔴 Critical</button>
+    <button class="filter-btn" data-priority="HIGH">🟠 High</button>
+    <button class="filter-btn" data-priority="MEDIUM">🟢 Medium</button>
+    <button class="filter-btn" data-priority="LOW">🔵 Low</button>
+  </div>
+  <div class="search-box">
+    <svg width="13" height="13" fill="none" stroke="#7A8499" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+    <input type="text" id="searchInput" placeholder="Search stories..." oninput="filterCards()"/>
+  </div>
+</div>
+
+<!-- ── MAIN ── -->
+<main class="main">
+
+<!-- Sprint Summary -->
+<div class="sprint-summary">
+  <div class="sprint-card">
+    <div class="sprint-num">SPRINT 1</div>
+    <div class="sprint-name">Foundation &amp; Email Setup</div>
+    <div class="sprint-pts">42 <span class="sprint-pts-label">pts</span></div>
+    <div class="sprint-bar"><div class="sprint-bar-fill" style="width:100%"></div></div>
+  </div>
+  <div class="sprint-card">
+    <div class="sprint-num">SPRINT 2</div>
+    <div class="sprint-name">Backend Core APIs</div>
+    <div class="sprint-pts">38 <span class="sprint-pts-label">pts</span></div>
+    <div class="sprint-bar"><div class="sprint-bar-fill" style="width:90%"></div></div>
+  </div>
+  <div class="sprint-card">
+    <div class="sprint-num">SPRINT 3</div>
+    <div class="sprint-name">AI Agent Pipeline</div>
+    <div class="sprint-pts">42 <span class="sprint-pts-label">pts</span></div>
+    <div class="sprint-bar"><div class="sprint-bar-fill" style="width:100%"></div></div>
+  </div>
+  <div class="sprint-card">
+    <div class="sprint-num">SPRINT 4</div>
+    <div class="sprint-name">DB Schema &amp; Integration</div>
+    <div class="sprint-pts">36 <span class="sprint-pts-label">pts</span></div>
+    <div class="sprint-bar"><div class="sprint-bar-fill" style="width:86%"></div></div>
+  </div>
+  <div class="sprint-card">
+    <div class="sprint-num">SPRINT 5</div>
+    <div class="sprint-name">PowerBI Dashboards</div>
+    <div class="sprint-pts">38 <span class="sprint-pts-label">pts</span></div>
+    <div class="sprint-bar"><div class="sprint-bar-fill" style="width:90%"></div></div>
+  </div>
+  <div class="sprint-card">
+    <div class="sprint-num">SPRINT 6</div>
+    <div class="sprint-name">Hardening &amp; Launch</div>
+    <div class="sprint-pts">32 <span class="sprint-pts-label">pts</span></div>
+    <div class="sprint-bar"><div class="sprint-bar-fill" style="width:76%"></div></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     EPIC 1: EMAIL INGESTION
+═══════════════════════════════════════ -->
+<div class="epic-block epic-email" data-epic="epic-email">
+  <div class="epic-header">
+    <span class="epic-icon">📧</span>
+    <span class="epic-title">Epic 1 — Email Ingestion &amp; Parsing</span>
+    <span class="epic-tag" style="background:var(--gold-lt);color:var(--gold);">SPRINT 1–2</span>
+    <span class="epic-count">6 stories · 62 pts</span>
+  </div>
+  <div class="story-grid" id="grid-email">
+
+    <div class="story-card" data-priority="CRITICAL" data-sprint="1" data-search="email imap smtp listener spring boot java">
+      <div class="story-top">
+        <span class="story-id">EML-001</span>
+        <span class="priority-badge p-critical">CRITICAL</span>
+      </div>
+      <div class="story-title">Email Listener Service (IMAP/SMTP)</div>
+      <div class="story-desc">As a system, I need to continuously poll a configured mailbox via IMAP so that incoming HR-related emails are captured in real-time for processing.</div>
+      <div class="sprint-badge">Sprint 1</div>
+      <button class="ac-toggle" onclick="toggleAC(this)">▶ Acceptance Criteria</button>
+      <div class="ac-content">
+        <ul>
+          <li>Spring Boot service connects to IMAP server using configured credentials</li>
+          <li>Polls inbox every 30 seconds (configurable)</li>
+          <li>Marks processed emails as read and moves to processed folder</li>
+          <li>Handles connection retries with exponential backoff</li>
+          <li>Unit tests with mock JavaMail session pass</li>
+        </ul>
+      </div>
+      <div class="story-footer">
+        <div class="tech-tags">
+          <span class="tech-tag">Spring Boot</span>
+          <span class="tech-tag">JavaMail</span>
+          <span class="tech-tag">IMAP</span>
+        </div>
+        <div class="story-points"><span class="sp-dot"></span>8 pts</div>
+      </div>
+    </div>
+
+    <div class="story-card" data-priority="CRITICAL" data-sprint="1" data-search="email parser subject body attachment extraction java">
+      <div class="story-top">
+        <span class="story-id">EML-002</span>
+        <span class="priority-badge p-critical">CRITICAL</span>
+      </div>
+      <div class="story-title">Raw Email Parser &amp; Metadata Extractor</div>
+      <div class="story-desc">As a developer, I need a parsing module that extracts sender, subject, body text, HTML content, and attachments from raw email messages into a structured DTO.</div>
+      <div class="sprint-badge">Sprint 1</div>
+      <button class="ac-toggle" onclick="toggleAC(this)">▶ Acceptance Criteria</button>
+      <div class="ac-content">
+        <ul>
+          <li>EmailParseDTO contains: sender, cc, subject, plain_text, html_body, attachments[]</li>
+          <li>Handles multipart MIME emails correctly</li>
+          <li>Strips HTML tags for plain-text fallback</li>
+          <li>Attachment extracted as Base64 with MIME type</li>
+          <li>99% parse success rate on test email corpus</li>
+        </ul>
+      </div>
+      <div class="story-footer">
+        <div class="tech-tags">
+          <span class="tech-tag">Java</span>
+          <span class="tech-tag">Apache MIME4J</span>
+          <span class="tech-tag">Spring</span>
+        </div>
+        <div class="story-points"><span class="sp-dot"></span>8 pts</div>
+      </div>
+    </div>
+
+    <div class="story-card" data-priority="HIGH" data-sprint="1" data-search="email classifier onboarding offboarding type detection">
+      <div class="story-top">
+        <span class="story-id">EML-003</span>
+        <span class="priority-badge p-high">HIGH</span>
+      </div>
+      <div class="story-title">Email Type Classifier (Pre-AI Rule Engine)</div>
+      <div class="story-desc">As a system, I want a fast rule-based classifier to pre-screen emails as ONBOARDING, OFFBOARDING, or UNKNOWN before sending to the AI agent, reducing unnecessary API calls.</div>
+      <div class="sprint-badge">Sprint 1</div>
+      <button class="ac-toggle" onclick="toggleAC(this)">▶ Acceptance Criteria</button>
+      <div class="ac-content">
+        <ul>
+          <li>Keyword rules configurable via YAML file</li>
+          <li>Returns: type (ONBOARDING/OFFBOARDING/UNKNOWN), confidence score</li>
+          <li>UNKNOWN types are forwarded to Claude AI for classification</li>
+          <li>85%+ accuracy on labeled test dataset</li>
+          <li>Processes email in under 50ms</li>
+        </ul>
+      </div>
+      <div class="story-footer">
+        <div class="tech-tags">
+          <span class="tech-tag">Java</span>
+          <span class="tech-tag">Spring Boot</span>
+          <span class="tech-tag">YAML config</span>
+        </div>
+        <div class="story-points"><span class="sp-dot"></span>5 pts</div>
+      </div>
+    </div>
+
+    <div class="story-card" data-priority="HIGH" data-sprint="2" data-search="email queue kafka rabbitmq async processing java spring">
+      <div class="story-top">
+        <span class="story-id">EML-004</span>
+        <span class="priority-badge p-high">HIGH</span>
+      </div>
+      <div class="story-title">Async Email Processing Queue</div>
+      <div class="story-desc">As a system, I need an asynchronous message queue so that email ingestion is decoupled from AI processing, enabling retry logic and horizontal scaling.</div>
+      <div class="sprint-badge">Sprint 2</div>
+      <button class="ac-toggle" onclick="toggleAC(this)">▶ Acceptance Criteria</button>
+      <div class="ac-content">
+        <ul>
+          <li>Parsed emails published to queue topic: hr.emails.raw</li>
+          <li>Dead-letter queue for failed processing after 3 retries</li>
+          <li>Queue consumer acknowledges only after successful DB write</li>
+          <li>Load tested at 100 emails/minute without degradation</li>
+        </ul>
+      </div>
+      <div class="story-footer">
+        <div class="tech-tags">
+          <span class="tech-tag">Spring Boot</span>
+          <span class="tech-tag">RabbitMQ</span>
+          <span class="tech-tag">Async</span>
+        </div>
+        <div class="story-points"><span class="sp-dot"></span>8 pts</div>
+      </div>
+    </div>
+
+    <div class="story-card" data-priority="MEDIUM" data-sprint="2" data-search="duplicate email detection dedup idempotent">
+      <div class="story-top">
+        <span class="story-id">EML-005</span>
+        <span class="priority-badge p-medium">MEDIUM</span>
+      </div>
+      <div class="story-title">Duplicate Email Detection</div>
+      <div class="story-desc">As a system, I need to detect and skip duplicate emails using Message-ID hashing so that the same onboarding email is never processed twice.</div>
+      <div class="sprint-badge">Sprint 2</div>
+      <button class="ac-toggle" onclick="toggleAC(this)">▶ Acceptance Criteria</button>
+      <div class="ac-content">
+        <ul>
+          <li>SHA-256 hash of Message-ID stored in processed_emails table</li>
+          <li>Hash check before queuing — duplicates discarded silently</li>
+          <li>Hash table cleaned up for emails older than 90 days</li>
+        </ul>
+      </div>
+      <div class="story-footer">
+        <div class="tech-tags">
+          <span class="tech-tag">Java</span>
+          <span class="tech-tag">PostgreSQL</span>
+          <span class="tech-tag">SHA-256</span>
+        </div>
+        <div class="story-points"><span class="sp-dot"></span>3 pts</div>
+      </div>
+    </div>
+
+    <div class="story-card" data-priority="MEDIUM" data-sprint="2" data-search="email audit log history trail ingestion">
+      <div class="story-top">
+        <span class="story-id">EML-006</span>
+        <span class="priority-badge p-medium">MEDIUM</span>
+      </div>
+      <div class="story-title">Email Ingestion Audit Trail</div>
+      <div class="story-desc">As a compliance officer, I need a complete audit log of every email received, its processing status, and outcome so that I can trace any data discrepancy back to source.</div>
+      <div class="sprint-badge">Sprint 2</div>
+      <button class="ac-toggle" onclick="toggleAC(this)">▶ Acceptance Criteria</button>
+      <div class="ac-content">
+        <ul>
+          <li>email_audit table logs: message_id, received_at, classified_as, status, error_msg</li>
+          <li>Admin API GET /audit/emails returns paginated results</li>
+          <li>Retention policy: 1 year</li>
+        </ul>
+      </div>
+      <div class="story-footer">
+        <div class="tech-tags">
+          <span class="tech-tag">Spring Boot</span>
+          <span class="tech-tag">PostgreSQL</span>
+          <span class="tech-tag">REST API</span>
+        </div>
+        <div class="story-points"><span class="sp-dot"></span>5 pts</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     EPIC 2: BACKEND (JAVA SPRING BOOT)
+═══════════════════════════════════════ -->
+<div class="epic-block epic-backend" data-epic="epic-backend">
+  <div class="epic-header">
+    <span class="epic-icon">☕</span>
+    <span class="epic-title">Epic 2 — Java Spring Boot Backend APIs</span>
+    <span class="epic-tag" style="background:var(--blue-lt);color:var(--blue);">SPRINT 2–3</span>
+    <span class="epic-count">6 stories · 42 pts</span>
+  </div>
+  <div class="story-grid" id="grid-backend">
+
+    <div class="story-card" data-priority="CRITICAL" data-sprint="2" data-search="employee rest api crud spring boot java endpoint">
+      <div class="story-top">
+        <span class="story-id">BE-001</span>
+        <span class="priority-badge p-critical">CRITICAL</span>
+      </div>
+      <div class="story-title">Employee CRUD REST API</div>
+      <div class="story-desc">As a developer, I need RESTful endpoints for the Employee entity so that other services and admin UIs can create, read, update, and query employee records.</div>
+      <div class="sprint-badge">Sprint 2</div>
+      <button class="ac-toggle" onclick="toggleAC(this)">▶ Acceptance Criteria</button>
+      <div class="ac-content">
+        <ul>
+          <li>POST /api/employees — create or upsert by email</li>
+          <li>GET /api/employees/{id} — fetch by ID</li>
+          <li>GET /api/employees?email=&amp;department=&amp;status= — filtered list</li>
+          <li>PATCH /api/employees/{id} — partial update</li>
+          <li>OpenAPI/Swagger documentation auto-generated</li>
+          <li>Input validation with @Valid annotations</li>
+        </ul>
+      </div>
+      <div class="story-footer">
+        <div class="tech-tags"><span class="tech-tag">Spring Boot</span><span class="tech-tag">JPA</span><span class="tech-tag">REST</span></div>
+        <div class="story-points"><span class="sp-dot"></span>8 pts</div>
+      </div>
+    </div>
+
+    <div class="story-card" data-priority="CRITICAL" data-sprint="2" data-search="onboarding offboarding api endpoints spring boot java">
+      <div class="story-top">
+        <span class="story-id">BE-002</span>
+        <span class="priority-badge p-critical">CRITICAL</span>
+      </div>
+      <div class="story-title">Onboarding &amp; Offboarding Event APIs</div>
+      <div class="story-desc">As the AI agent, I need REST endpoints to submit structured onboarding and offboarding records so that parsed email data is persisted to PostgreSQL correctly.</div>
+      <div class="sprint-badge">Sprint 2</div>
+      <button class="ac-toggle" onclick="toggleAC(this)">▶ Acceptance Criteria</button>
+      <div class="ac-content">
+        <ul>
+          <li>POST /api/onboarding — creates onboarding record, upserts employee</li>
+          <li>POST /api/offboarding — creates offboarding, updates employee status to inactive</li>
+          <li>GET /api/onboarding?employee_id= — list employee onboarding events</li>
+          <li>FK integrity maintained; transaction-safe</li>
+          <li>Returns created resource with 201 status</li>
+        </ul>
+      </div>
+      <div class="story-footer">
+        <div class="tech-tags"><span class="tech-tag">Spring Boot</span><span class="tech-tag">PostgreSQL</span><span class="tech-tag">JPA</span></div>
+        <div class="story-points"><span class="sp-dot"></span>8 pts</div>
+      </div>
+    </div>
+
+    <div class="story-card" data-priority="HIGH" data-sprint="3" data-search="authentication jwt security spring security api">
+      <div class="story-top">
+        <span class="story-id">BE-003</span>
+        <span class="priority-badge p-high">HIGH</span>
+      </div>
+      <div class="story-title">JWT Authentication &amp; Role-Based Access</div>
+      <div class="story-desc">As a security engineer, I need all APIs protected with JWT authentication and role-based access control so that only authorized services and users can interact with HR data.</div>
+      <div class="sprint-badge">Sprint 3</div>
+      <button class="ac-toggle" onclick="toggleAC(this)">▶ Acceptance Criteria</button>
+      <div class="ac-content">
+        <ul>
+          <li>POST /auth/token returns JWT on valid credentials</li>
+          <li>Roles: ADMIN, AI_SERVICE, READONLY, POWERBI_SERVICE</li>
+          <li>All /api/** endpoints require valid Bearer token</li>
+          <li>Token expiry: 1 hour; refresh token: 7 days</li>
+          <li>401/403 responses with descriptive error codes</li>
+        </ul>
+      </div>
+      <div class="story-footer">
+        <div class="tech-tags"><span class="tech-tag">Spring Security</span><span class="tech-tag">JWT</span><span class="tech-tag">RBAC</span></div>
+        <div class="story-points"><span class="sp-dot"></span>8 pts</div>
+      </div>
+    </div>
+
+    <div class="story-card" data-priority="HIGH" data-sprint="3" data-search="global error handling exception spring boot api">
+      <div class="story-top">
+        <span class="story-id">BE-004</span>
+        <span class="priority-badge p-high">HIGH</span>
+      </div>
+      <div class="story-title">Global Exception Handling &amp; Error Responses</div>
+      <div class="story-desc">As a developer, I need a centralized @ControllerAdvice that returns consistent, structured JSON error responses across all endpoints for predictable client-side handling.</div>
+      <div class="sprint-badge">Sprint 3</div>
+      <button class="ac-toggle" onclick="toggleAC(this)">▶ Acceptance Criteria</button>
+      <div class="ac-content">
+        <ul>
+          <li>Standard error response: {code, message, timestamp, path}</li>
+          <li>Validation errors list all field violations</li>
+          <li>No stack traces exposed in production mode</li>
+          <li>All exceptions logged to structured log with correlation ID</li>
+        </ul>
+      </div>
+      <div class="story-footer">
+        <div class="tech-tags"><span class="tech-tag">Spring Boot</span><span class="tech-tag">@ControllerAdvice</span></div>
+        <div class="story-points"><span class="sp-dot"></span>5 pts</div>
+      </div>
+    </div>
+
+    <div class="story-card" data-priority="MEDIUM" data-sprint="3" data-search="health check actuator metrics monitoring spring boot">
+      <div class="story-top">
+        <span class="story-id">BE-005</span>
+        <span class="priority-badge p-medium">MEDIUM</span>
+      </div>
+      <div class="story-title">Health Checks &amp; Actuator Metrics</div>
+      <div class="story-desc">As a DevOps engineer, I need Spring Boot Actuator endpoints so that Kubernetes liveness/readiness probes and monitoring dashboards can track service health.</div>
+      <div class="sprint-badge">Sprint 3</div>
+      <button class="ac-toggle" onclick="toggleAC(this)">▶ Acceptance Criteria</button>
+      <div class="ac-content">
+        <ul>
+          <li>/actuator/health returns DB, queue, and AI API connectivity status</li>
+          <li>Prometheus metrics exposed at /actuator/prometheus</li>
+          <li>Custom metrics: emails_processed_total, ai_calls_total, ai_errors_total</li>
+        </ul>
+      </div>
+      <div class="story-footer">
+        <div class="tech-tags"><span class="tech-tag">Spring Actuator</span><span class="tech-tag">Prometheus</span></div>
+        <div class="story-points"><span class="sp-dot"></span>5 pts</div>
+      </div>
+    </div>
+
+    <div class="story-card" data-priority="MEDIUM" data-sprint="3" data-search="api rate limiting throttle spring boot">
+      <div class="story-top">
+        <span class="story-id">BE-006</span>
+        <span class="priority-badge p-medium">MEDIUM</span>
+      </div>
+      <div class="story-title">API Rate Limiting</div>
+      <div class="story-desc">As a system operator, I need rate limiting on all external-facing API endpoints so that Claude API cost overruns and abuse are prevented.</div>
+      <div class="sprint-badge">Sprint 3</div>
+      <button class="ac-toggle" onclick="toggleAC(this)">▶ Acceptance Criteria</button>
+      <div class="ac-content">
+        <ul>
+          <li>Max 60 AI-trigger requests/minute per service token</li>
+          <li>429 Too Many Requests with Retry-After header</li>
+          <li>Rate limit counters stored in Redis</li>
+        </ul>
+      </div>
+      <div class="story-footer">
+        <div class="tech-tags"><span class="tech-tag">Spring Boot</span><span class="tech-tag">Redis</span><span class="tech-tag">Bucket4j</span></div>
+        <div class="story-points"><span class="sp-dot"></span>5 pts</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     EPIC 3: AI AGENT (Python + Claude)
+═══════════════════════════════════════ -->
+<div class="epic-block epic-ai" data-epic="epic-ai">
+  <div class="epic-header">
+    <span class="epic-icon">🤖</span>
+    <span class="epic-title">Epic 3 — Python AI Agent &amp; Claude API</span>
+    <span class="epic-tag" style="background:var(--purple-lt);color:var(--purple);">SPRINT 3–4</span>
+    <span class="epic-count">7 stories · 55 pts</span>
+  </div>
+  <div class="story-grid" id="grid-ai">
+
+    <div class="story-card" data-priority="CRITICAL" data-sprint="3" data-search="claude api integration python agentic extraction NLP">
+      <div class="story-top">
+        <span class="story-id">AI-001</span>
+        <span class="priority-badge p-critical">CRITICAL</span>
+      </div>
+      <div class="story-title">Claude API Integration &amp; Prompt Design</div>
+      <div class="story-desc">As a developer, I need a Python service that calls claude-sonnet-4-20250514 with a structured prompt to extract HR data fields from raw email text.</div>
+      <div class="sprint-badge">Sprint 3</div>
+      <button class="ac-toggle" onclick="toggleAC(this)">▶ Acceptance Criteria</button>
+      <div class="ac-content">
+        <ul>
+          <li>Uses Anthropic Python SDK with claude-sonnet-4-20250514 model</li>
+          <li>System prompt instructs Claude to return ONLY JSON (no markdown)</li>
+          <li>Extracted fields: employee_name, email, role, department, location, date, experience, type</li>
+          <li>Prompt includes few-shot examples for accuracy</li>
+          <li>Response parsed and validated against Pydantic schema</li>
+          <li>API key loaded from environment variable, never hardcoded</li>
+        </ul>
+      </div>
+      <div class="story-footer">
+        <div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">Claude API</span><span class="tech-tag">Pydantic</span></div>
+        <div class="story-points"><span class="sp-dot"></span>13 pts</div>
+      </div>
+    </div>
+
+    <div class="story-card" data-priority="CRITICAL" data-sprint="3" data-search="agentic ai orchestrator pipeline python langchain">
+      <div class="story-top">
+        <span class="story-id">AI-002</span>
+        <span class="priority-badge p-critical">CRITICAL</span>
+      </div>
+      <div class="story-title">Agentic Orchestration Pipeline</div>
+      <div class="story-desc">As a system, I need an agentic loop that decides: classify email → extract data → validate → call Spring Boot API → handle failures autonomously, without human intervention.</div>
+      <div class="sprint-badge">Sprint 3</div>
+      <button class="ac-toggle" onclick="toggleAC(this)">▶ Acceptance Criteria</button>
+      <div class="ac-content">
+        <ul>
+          <li>Agent follows: RECEIVE → CLASSIFY → EXTRACT → VALIDATE → PERSIST steps</li>
+          <li>If validation fails, agent re-prompts Claude with error context (max 2 retries)</li>
+          <li>Agent logs each step decision to agent_runs table</li>
+          <li>Low-confidence extractions flagged for human review queue</li>
+          <li>End-to-end latency target: under 10 seconds per email</li>
+        </ul>
+      </div>
+      <div class="story-footer">
+        <div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">Claude API</span><span class="tech-tag">FastAPI</span></div>
+        <div class="story-points"><span class="sp-dot"></span>13 pts</div>
+      </div>
+    </div>
+
+    <div class="story-card" data-priority="HIGH" data-sprint="4" data-search="employee matching resolution identity email lookup">
+      <div class="story-top">
+        <span class="story-id">AI-003</span>
+        <span class="priority-badge p-high">HIGH</span>
+      </div>
+      <div class="story-title">Employee Identity Resolution</div>
+      <div class="story-desc">As the AI agent, I need to match an extracted email address against the EMPLOYEE table to resolve the employee_id, or create a new employee record if not found.</div>
+      <div class="sprint-badge">Sprint 4</div>
+      <button class="ac-toggle" onclick="toggleAC(this)">▶ Acceptance Criteria</button>
+      <div class="ac-content">
+        <ul>
+          <li>Calls GET /api/employees?email= to look up existing employee</li>
+          <li>If found: uses existing employee_id</li>
+          <li>If not found: calls POST /api/employees to create new record</li>
+          <li>Fuzzy name match as secondary fallback (Levenshtein distance)</li>
+          <li>Ambiguous matches flagged for human review</li>
+        </ul>
+      </div>
+      <div class="story-footer">
+        <div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">Spring API</span><span class="tech-tag">fuzzywuzzy</span></div>
+        <div class="story-points"><span class="sp-dot"></span>8 pts</div>
+      </div>
+    </div>
+
+    <div class="story-card" data-priority="HIGH" data-sprint="4" data-search="claude prompt engineering few shot extraction accuracy">
+      <div class="story-top">
+        <span class="story-id">AI-004</span>
+        <span class="priority-badge p-high">HIGH</span>
+      </div>
+      <div class="story-title">Prompt Versioning &amp; A/B Testing</div>
+      <div class="story-desc">As a data scientist, I need a prompt registry so that I can version, test, and roll back Claude prompts without redeploying the service.</div>
+      <div class="sprint-badge">Sprint 4</div>
+      <button class="ac-toggle" onclick="toggleAC(this)">▶ Acceptance Criteria</button>
+      <div class="ac-content">
+        <ul>
+          <li>Prompts stored in prompt_versions table with version number</li>
+          <li>Active prompt configurable via env variable PROMPT_VERSION</li>
+          <li>Extraction accuracy tracked per prompt version</li>
+          <li>Rollback to previous version in under 1 minute</li>
+        </ul>
+      </div>
+      <div class="story-footer">
+        <div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">PostgreSQL</span><span class="tech-tag">Claude API</span></div>
+        <div class="story-points"><span class="sp-dot"></span>5 pts</div>
+      </div>
+    </div>
+
+    <div class="story-card" data-priority="HIGH" data-sprint="4" data-search="human review fallback low confidence queue validation">
+      <div class="story-top">
+        <span class="story-id">AI-005</span>
+        <span class="priority-badge p-high">HIGH</span>
+      </div>
+      <div class="story-title">Human Review Queue for Low-Confidence Extractions</div>
+      <div class="story-desc">As an HR admin, I need a review queue where the AI agent flags uncertain extractions so that a human can verify and correct data before it's saved to the database.</div>
+      <div class="sprint-badge">Sprint 4</div>
+      <button class="ac-toggle" onclick="toggleAC(this)">▶ Acceptance Criteria</button>
+      <div class="ac-content">
+        <ul>
+          <li>Confidence score below 0.75 triggers a review_queue entry</li>
+          <li>GET /api/review-queue returns pending items for admin</li>
+          <li>Admin can APPROVE or REJECT with corrections via PATCH</li>
+          <li>Approved items trigger backend persistence automatically</li>
+        </ul>
+      </div>
+      <div class="story-footer">
+        <div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">Spring Boot</span><span class="tech-tag">PostgreSQL</span></div>
+        <div class="story-points"><span class="sp-dot"></span>8 pts</div>
+      </div>
+    </div>
+
+    <div class="story-card" data-priority="MEDIUM" data-sprint="4" data-search="ai cost tracking claude api token usage monitoring">
+      <div class="story-top">
+        <span class="story-id">AI-006</span>
+        <span class="priority-badge p-medium">MEDIUM</span>
+      </div>
+      <div class="story-title">Claude API Cost Tracking &amp; Token Monitoring</div>
+      <div class="story-desc">As a product owner, I need visibility into Claude API token consumption and estimated cost per email so that I can manage budget and optimize prompts.</div>
+      <div class="sprint-badge">Sprint 4</div>
+      <button class="ac-toggle" onclick="toggleAC(this)">▶ Acceptance Criteria</button>
+      <div class="ac-content">
+        <ul>
+          <li>Tokens (input + output) logged per AI call to ai_usage table</li>
+          <li>Daily cost estimate calculated using current pricing</li>
+          <li>GET /api/ai/usage?from=&amp;to= returns usage summary</li>
+          <li>Alert triggered when daily cost exceeds configurable threshold</li>
+        </ul>
+      </div>
+      <div class="story-footer">
+        <div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">Claude API</span><span class="tech-tag">PostgreSQL</span></div>
+        <div class="story-points"><span class="sp-dot"></span>5 pts</div>
+      </div>
+    </div>
+
+    <div class="story-card" data-priority="LOW" data-sprint="4" data-search="ai agent testing eval accuracy benchmark">
+      <div class="story-top">
+        <span class="story-id">AI-007</span>
+        <span class="priority-badge p-low">LOW</span>
+      </div>
+      <div class="story-title">AI Extraction Evaluation Framework</div>
+      <div class="story-desc">As a QA engineer, I need an automated eval suite that tests extraction accuracy against a labeled golden dataset so that prompt regressions are caught before deployment.</div>
+      <div class="sprint-badge">Sprint 4</div>
+      <button class="ac-toggle" onclick="toggleAC(this)">▶ Acceptance Criteria</button>
+      <div class="ac-content">
+        <ul>
+          <li>50-email golden dataset with ground-truth JSON labels</li>
+          <li>Eval script computes field-level F1 score</li>
+          <li>CI pipeline runs eval on every prompt change PR</li>
+          <li>Fails CI if overall accuracy drops below 90%</li>
+        </ul>
+      </div>
+      <div class="story-footer">
+        <div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">pytest</span><span class="tech-tag">CI/CD</span></div>
+        <div class="story-points"><span class="sp-dot"></span>3 pts</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     EPIC 4: DATABASE (PostgreSQL)
+═══════════════════════════════════════ -->
+<div class="epic-block epic-db" data-epic="epic-db">
+  <div class="epic-header">
+    <span class="epic-icon">🐘</span>
+    <span class="epic-title">Epic 4 — PostgreSQL Database &amp; Schema</span>
+    <span class="epic-tag" style="background:var(--green-lt);color:var(--green);">SPRINT 1 &amp; 4</span>
+    <span class="epic-count">5 stories · 27 pts</span>
+  </div>
+  <div class="story-grid" id="grid-db">
+
+    <div class="story-card" data-priority="CRITICAL" data-sprint="1" data-search="flyway liquibase database migration schema versioning postgresql">
+      <div class="story-top">
+        <span class="story-id">DB-001</span>
+        <span class="priority-badge p-critical">CRITICAL</span>
+      </div>
+      <div class="story-title">Database Schema &amp; Migration Scripts</div>
+      <div class="story-desc">As a developer, I need Flyway migration scripts for all tables so that schema changes are version-controlled and reproducible across environments.</div>
+      <div class="sprint-badge">Sprint 1</div>
+      <button class="ac-toggle" onclick="toggleAC(this)">▶ Acceptance Criteria</button>
+      <div class="ac-content">
+        <ul>
+          <li>V1__create_employee.sql — employee table + indexes</li>
+          <li>V2__create_onboarding.sql — onboarding + FK</li>
+          <li>V3__create_offboarding.sql — offboarding + FK</li>
+          <li>V4__create_audit_tables.sql — email_audit, agent_runs</li>
+          <li>Flyway runs automatically on Spring Boot startup</li>
+          <li>Migrations tested on clean DB in CI pipeline</li>
+        </ul>
+      </div>
+      <div class="story-footer">
+        <div class="tech-tags"><span class="tech-tag">PostgreSQL</span><span class="tech-tag">Flyway</span><span class="tech-tag">Spring Boot</span></div>
+        <div class="story-points"><span class="sp-dot"></span>8 pts</div>
+      </div>
+    </div>
+
+    <div class="story-card" data-priority="HIGH" data-sprint="4" data-search="postgresql view lifecycle powerbi reporting query">
+      <div class="story-top">
+        <span class="story-id">DB-002</span>
+        <span class="priority-badge p-high">HIGH</span>
+      </div>
+      <div class="story-title">PowerBI Reporting Views</div>
+      <div class="story-desc">As a BI developer, I need optimized SQL views so that PowerBI can query pre-joined, aggregated data without complex custom SQL in the report itself.</div>
+      <div class="sprint-badge">Sprint 4</div>
+      <button class="ac-toggle" onclick="toggleAC(this)">▶ Acceptance Criteria</button>
+      <div class="ac-content">
+        <ul>
+          <li>vw_employee_lifecycle — joined employee + on/offboarding data</li>
+          <li>vw_onboarding_monthly — monthly hire counts by dept/location</li>
+          <li>vw_attrition_metrics — monthly exit rates and tenure averages</li>
+          <li>Views tested with EXPLAIN ANALYZE — no seq scans on large tables</li>
+        </ul>
+      </div>
+      <div class="story-footer">
+        <div class="tech-tags"><span class="tech-tag">PostgreSQL</span><span class="tech-tag">SQL Views</span><span class="tech-tag">PowerBI</span></div>
+        <div class="story-points"><span class="sp-dot"></span>5 pts</div>
+      </div>
+    </div>
+
+    <div class="story-card" data-priority="HIGH" data-sprint="4" data-search="database backup recovery postgresql pg_dump restore">
+      <div class="story-top">
+        <span class="story-id">DB-003</span>
+        <span class="priority-badge p-high">HIGH</span>
+      </div>
+      <div class="story-title">Automated Backup &amp; Point-in-Time Recovery</div>
+      <div class="story-desc">As a DBA, I need automated daily backups with point-in-time recovery capability so that employee data can be restored in case of accidental deletion or corruption.</div>
+      <div class="sprint-badge">Sprint 4</div>
+      <button class="ac-toggle" onclick="toggleAC(this)">▶ Acceptance Criteria</button>
+      <div class="ac-content">
+        <ul>
+          <li>pg_dump scheduled daily at 2AM, stored in object storage</li>
+          <li>WAL archiving enabled for PITR</li>
+          <li>Restore drill performed and documented</li>
+          <li>Backup retention: 30 days</li>
+        </ul>
+      </div>
+      <div class="story-footer">
+        <div class="tech-tags"><span class="tech-tag">PostgreSQL</span><span class="tech-tag">pg_dump</span><span class="tech-tag">WAL</span></div>
+        <div class="story-points"><span class="sp-dot"></span>5 pts</div>
+      </div>
+    </div>
+
+    <div class="story-card" data-priority="MEDIUM" data-sprint="4" data-search="row level security postgresql rbac data access">
+      <div class="story-top">
+        <span class="story-id">DB-004</span>
+        <span class="priority-badge p-medium">MEDIUM</span>
+      </div>
+      <div class="story-title">Row-Level Security Policies</div>
+      <div class="story-desc">As a security architect, I need PostgreSQL row-level security so that the PowerBI service role can only read data and cannot modify HR records directly.</div>
+      <div class="sprint-badge">Sprint 4</div>
+      <button class="ac-toggle" onclick="toggleAC(this)">▶ Acceptance Criteria</button>
+      <div class="ac-content">
+        <ul>
+          <li>DB roles: app_write (Spring Boot), ai_write (Python), pbi_read (PowerBI)</li>
+          <li>RLS policies restrict pbi_read to SELECT only</li>
+          <li>GRANT statements documented and version-controlled</li>
+        </ul>
+      </div>
+      <div class="story-footer">
+        <div class="tech-tags"><span class="tech-tag">PostgreSQL</span><span class="tech-tag">RLS</span><span class="tech-tag">RBAC</span></div>
+        <div class="story-points"><span class="sp-dot"></span>5 pts</div>
+      </div>
+    </div>
+
+    <div class="story-card" data-priority="LOW" data-sprint="4" data-search="database performance query optimization index tuning explain">
+      <div class="story-top">
+        <span class="story-id">DB-005</span>
+        <span class="priority-badge p-low">LOW</span>
+      </div>
+      <div class="story-title">Query Performance Tuning &amp; Index Review</div>
+      <div class="story-desc">As a DBA, I need a query performance review so that slow queries identified by pg_stat_statements are optimized before production launch.</div>
+      <div class="sprint-badge">Sprint 4</div>
+      <button class="ac-toggle" onclick="toggleAC(this)">▶ Acceptance Criteria</button>
+      <div class="ac-content">
+        <ul>
+          <li>pg_stat_statements enabled and reviewed</li>
+          <li>All queries in critical paths execute in under 100ms on 100K rows</li>
+          <li>EXPLAIN ANALYZE output documented for top 10 queries</li>
+        </ul>
+      </div>
+      <div class="story-footer">
+        <div class="tech-tags"><span class="tech-tag">PostgreSQL</span><span class="tech-tag">EXPLAIN</span><span class="tech-tag">pg_stat</span></div>
+        <div class="story-points"><span class="sp-dot"></span>3 pts</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     EPIC 5: POWERBI DASHBOARD
+═══════════════════════════════════════ -->
+<div class="epic-block epic-dashboard" data-epic="epic-dashboard">
+  <div class="epic-header">
+    <span class="epic-icon">📊</span>
+    <span class="epic-title">Epic 5 — PowerBI Dashboards</span>
+    <span class="epic-tag" style="background:var(--red-lt);color:var(--red);">SPRINT 5</span>
+    <span class="epic-count">6 stories · 34 pts</span>
+  </div>
+  <div class="story-grid" id="grid-dashboard">
+
+    <div class="story-card" data-priority="CRITICAL" data-sprint="5" data-search="powerbi postgresql directquery connection setup dataset">
+      <div class="story-top">
+        <span class="story-id">PBI-001</span>
+        <span class="priority-badge p-critical">CRITICAL</span>
+      </div>
+      <div class="story-title">PowerBI ↔ PostgreSQL DirectQuery Setup</div>
+      <div class="story-desc">As a BI developer, I need to configure a live DirectQuery connection from PowerBI Service to PostgreSQL so that dashboards always show current data without manual refresh.</div>
+      <div class="sprint-badge">Sprint 5</div>
+      <button class="ac-toggle" onclick="toggleAC(this)">▶ Acceptance Criteria</button>
+      <div class="ac-content">
+        <ul>
+          <li>On-premises data gateway configured for PostgreSQL</li>
+          <li>DirectQuery connection uses pbi_read role (read-only)</li>
+          <li>Connection tested with all 3 reporting views</li>
+          <li>Query folding verified for major DAX measures</li>
+          <li>Scheduled refresh: every 15 minutes during business hours</li>
+        </ul>
+      </div>
+      <div class="story-footer">
+        <div class="tech-tags"><span class="tech-tag">PowerBI</span><span class="tech-tag">PostgreSQL</span><span class="tech-tag">Gateway</span></div>
+        <div class="story-points"><span class="sp-dot"></span>8 pts</div>
+      </div>
+    </div>
+
+    <div class="story-card" data-priority="CRITICAL" data-sprint="5" data-search="powerbi onboarding dashboard page KPI trends charts">
+      <div class="story-top">
+        <span class="story-id">PBI-002</span>
+        <span class="priority-badge p-critical">CRITICAL</span>
+      </div>
+      <div class="story-title">Onboarding Analytics Dashboard Page</div>
+      <div class="story-desc">As an HR manager, I need an Onboarding dashboard page showing hire trends, department breakdowns, location maps, and role distributions so that I can track hiring velocity.</div>
+      <div class="sprint-badge">Sprint 5</div>
+      <button class="ac-toggle" onclick="toggleAC(this)">▶ Acceptance Criteria</button>
+      <div class="ac-content">
+        <ul>
+          <li>KPI cards: Total Hired MTD, YTD, Avg Time-to-Onboard</li>
+          <li>Line chart: Monthly hire trend (last 12 months)</li>
+          <li>Bar chart: Hires by Department and by Role</li>
+          <li>Map visual: Hires by Location</li>
+          <li>Slicers: Department, Date Range, Business Unit</li>
+          <li>Page loads in under 3 seconds</li>
+        </ul>
+      </div>
+      <div class="story-footer">
+        <div class="tech-tags"><span class="tech-tag">PowerBI</span><span class="tech-tag">DAX</span><span class="tech-tag">Visuals</span></div>
+        <div class="story-points"><span class="sp-dot"></span>8 pts</div>
+      </div>
+    </div>
+
+    <div class="story-card" data-priority="HIGH" data-sprint="5" data-search="powerbi offboarding attrition dashboard exit analysis">
+      <div class="story-top">
+        <span class="story-id">PBI-003</span>
+        <span class="priority-badge p-high">HIGH</span>
+      </div>
+      <div class="story-title">Offboarding &amp; Attrition Analytics Page</div>
+      <div class="story-desc">As an HR director, I need an Offboarding page showing attrition rates, tenure distributions, exit role analysis, and department-level churn so I can identify retention risks.</div>
+      <div class="sprint-badge">Sprint 5</div>
+      <button class="ac-toggle" onclick="toggleAC(this)">▶ Acceptance Criteria</button>
+      <div class="ac-content">
+        <ul>
+          <li>KPI cards: Total Exits MTD, Attrition Rate %, Avg Tenure Days</li>
+          <li>Donut chart: Exits by Department</li>
+          <li>Bar chart: Top exit roles</li>
+          <li>Line chart: Monthly attrition trend</li>
+          <li>Histogram: Tenure distribution at exit</li>
+        </ul>
+      </div>
+      <div class="story-footer">
+        <div class="tech-tags"><span class="tech-tag">PowerBI</span><span class="tech-tag">DAX</span><span class="tech-tag">Attrition</span></div>
+        <div class="story-points"><span class="sp-dot"></span>8 pts</div>
+      </div>
+    </div>
+
+    <div class="story-card" data-priority="HIGH" data-sprint="5" data-search="powerbi executive summary headcount net active inactive">
+      <div class="story-top">
+        <span class="story-id">PBI-004</span>
+        <span class="priority-badge p-high">HIGH</span>
+      </div>
+      <div class="story-title">Executive Headcount Summary Page</div>
+      <div class="story-desc">As a C-level executive, I need a single-page summary of total headcount, net growth, active vs inactive breakdown, and manager span-of-control for board reporting.</div>
+      <div class="sprint-badge">Sprint 5</div>
+      <button class="ac-toggle" onclick="toggleAC(this)">▶ Acceptance Criteria</button>
+      <div class="ac-content">
+        <ul>
+          <li>Total Active Headcount card (real-time)</li>
+          <li>Net Headcount growth chart (hires minus exits per month)</li>
+          <li>Treemap: headcount by Business Unit</li>
+          <li>Table: Manager span-of-control sorted descending</li>
+        </ul>
+      </div>
+      <div class="story-footer">
+        <div class="tech-tags"><span class="tech-tag">PowerBI</span><span class="tech-tag">DAX</span><span class="tech-tag">Executive</span></div>
+        <div class="story-points"><span class="sp-dot"></span>5 pts</div>
+      </div>
+    </div>
+
+    <div class="story-card" data-priority="MEDIUM" data-sprint="5" data-search="powerbi row level security RLS department filter access">
+      <div class="story-top">
+        <span class="story-id">PBI-005</span>
+        <span class="priority-badge p-medium">MEDIUM</span>
+      </div>
+      <div class="story-title">PowerBI Row-Level Security by Department</div>
+      <div class="story-desc">As a department manager, I should only see data for my own department in the dashboards so that sensitive cross-department HR data is protected.</div>
+      <div class="sprint-badge">Sprint 5</div>
+      <button class="ac-toggle" onclick="toggleAC(this)">▶ Acceptance Criteria</button>
+      <div class="ac-content">
+        <ul>
+          <li>RLS role defined in PowerBI using username() function</li>
+          <li>Department filter applies automatically on login</li>
+          <li>HR Admin role bypasses RLS and sees all departments</li>
+          <li>Verified with 3 test user accounts across different departments</li>
+        </ul>
+      </div>
+      <div class="story-footer">
+        <div class="tech-tags"><span class="tech-tag">PowerBI</span><span class="tech-tag">RLS</span><span class="tech-tag">Security</span></div>
+        <div class="story-points"><span class="sp-dot"></span>3 pts</div>
+      </div>
+    </div>
+
+    <div class="story-card" data-priority="LOW" data-sprint="5" data-search="powerbi email alert subscription scheduled report">
+      <div class="story-top">
+        <span class="story-id">PBI-006</span>
+        <span class="priority-badge p-low">LOW</span>
+      </div>
+      <div class="story-title">Scheduled Email Reports &amp; Alerts</div>
+      <div class="story-desc">As an HR manager, I want to receive a weekly email with the Onboarding/Offboarding summary attached as a PDF so that I don't need to log in to get key numbers.</div>
+      <div class="sprint-badge">Sprint 5</div>
+      <button class="ac-toggle" onclick="toggleAC(this)">▶ Acceptance Criteria</button>
+      <div class="ac-content">
+        <ul>
+          <li>Subscription configured for Monday 8AM email delivery</li>
+          <li>Data alert: notify when weekly attrition rate exceeds 5%</li>
+          <li>Report exported as PDF attachment automatically</li>
+        </ul>
+      </div>
+      <div class="story-footer">
+        <div class="tech-tags"><span class="tech-tag">PowerBI Service</span><span class="tech-tag">Email Alerts</span></div>
+        <div class="story-points"><span class="sp-dot"></span>2 pts</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     EPIC 6: INFRA & DevOps
+═══════════════════════════════════════ -->
+<div class="epic-block epic-infra" data-epic="epic-infra">
+  <div class="epic-header">
+    <span class="epic-icon">⚙️</span>
+    <span class="epic-title">Epic 6 — Infrastructure, DevOps &amp; Security</span>
+    <span class="epic-tag" style="background:#E8EDF2;color:var(--slate);">SPRINT 1 &amp; 6</span>
+    <span class="epic-count">6 stories · 38 pts</span>
+  </div>
+  <div class="story-grid" id="grid-infra">
+
+    <div class="story-card" data-priority="CRITICAL" data-sprint="1" data-search="docker compose local dev environment setup postgresql spring python">
+      <div class="story-top">
+        <span class="story-id">INF-001</span>
+        <span class="priority-badge p-critical">CRITICAL</span>
+      </div>
+      <div class="story-title">Docker Compose Local Dev Environment</div>
+      <div class="story-desc">As a developer, I need a single docker-compose.yml that spins up PostgreSQL, Spring Boot API, Python AI agent, and RabbitMQ so that any team member can run the full stack locally in one command.</div>
+      <div class="sprint-badge">Sprint 1</div>
+      <button class="ac-toggle" onclick="toggleAC(this)">▶ Acceptance Criteria</button>
+      <div class="ac-content">
+        <ul>
+          <li>docker compose up starts all services with health checks</li>
+          <li>PostgreSQL seeded with sample data via init.sql</li>
+          <li>.env.example documents all required environment variables</li>
+          <li>README has one-command setup instructions</li>
+          <li>Verified on macOS, Linux, and Windows WSL2</li>
+        </ul>
+      </div>
+      <div class="story-footer">
+        <div class="tech-tags"><span class="tech-tag">Docker</span><span class="tech-tag">Compose</span><span class="tech-tag">DevOps</span></div>
+        <div class="story-points"><span class="sp-dot"></span>8 pts</div>
+      </div>
+    </div>
+
+    <div class="story-card" data-priority="HIGH" data-sprint="6" data-search="CI CD github actions pipeline test build deploy">
+      <div class="story-top">
+        <span class="story-id">INF-002</span>
+        <span class="priority-badge p-high">HIGH</span>
+      </div>
+      <div class="story-title">CI/CD Pipeline (GitHub Actions)</div>
+      <div class="story-desc">As a team lead, I need automated CI/CD pipelines for all three services so that code merged to main is automatically tested, built, and deployed to staging.</div>
+      <div class="sprint-badge">Sprint 6</div>
+      <button class="ac-toggle" onclick="toggleAC(this)">▶ Acceptance Criteria</button>
+      <div class="ac-content">
+        <ul>
+          <li>On PR: run unit tests, lint, and integration tests</li>
+          <li>On merge to main: build Docker images and push to registry</li>
+          <li>Deploy to staging automatically; production requires manual approval</li>
+          <li>Pipeline completes in under 8 minutes</li>
+          <li>Secrets managed via GitHub Actions Secrets (no plaintext)</li>
+        </ul>
+      </div>
+      <div class="story-footer">
+        <div class="tech-tags"><span class="tech-tag">GitHub Actions</span><span class="tech-tag">Docker</span><span class="tech-tag">CI/CD</span></div>
+        <div class="story-points"><span class="sp-dot"></span>8 pts</div>
+      </div>
+    </div>
+
+    <div class="story-card" data-priority="HIGH" data-sprint="6" data-search="structured logging observability elk stack monitoring spring python">
+      <div class="story-top">
+        <span class="story-id">INF-003</span>
+        <span class="priority-badge p-high">HIGH</span>
+      </div>
+      <div class="story-title">Structured Logging &amp; Observability</div>
+      <div class="story-desc">As an ops engineer, I need structured JSON logs with correlation IDs across all services so that I can trace a single email from ingestion to DB write in one log query.</div>
+      <div class="sprint-badge">Sprint 6</div>
+      <button class="ac-toggle" onclick="toggleAC(this)">▶ Acceptance Criteria</button>
+      <div class="ac-content">
+        <ul>
+          <li>All services emit JSON logs with fields: timestamp, level, service, correlation_id, message</li>
+          <li>Correlation ID propagated from email ingestion through AI agent to DB write</li>
+          <li>Logs shipped to centralized log aggregation (ELK / CloudWatch)</li>
+          <li>Log level configurable per service via env variable</li>
+        </ul>
+      </div>
+      <div class="story-footer">
+        <div class="tech-tags"><span class="tech-tag">Logback</span><span class="tech-tag">Python logging</span><span class="tech-tag">ELK</span></div>
+        <div class="story-points"><span class="sp-dot"></span>8 pts</div>
+      </div>
+    </div>
+
+    <div class="story-card" data-priority="HIGH" data-sprint="6" data-search="secrets management environment variables vault api key security">
+      <div class="story-top">
+        <span class="story-id">INF-004</span>
+        <span class="priority-badge p-high">HIGH</span>
+      </div>
+      <div class="story-title">Secrets Management &amp; API Key Rotation</div>
+      <div class="story-desc">As a security engineer, I need all credentials (DB passwords, Claude API key, IMAP credentials) managed via a secrets manager so that they are never stored in code or config files.</div>
+      <div class="sprint-badge">Sprint 6</div>
+      <button class="ac-toggle" onclick="toggleAC(this)">▶ Acceptance Criteria</button>
+      <div class="ac-content">
+        <ul>
+          <li>All secrets loaded from AWS Secrets Manager or HashiCorp Vault</li>
+          <li>No secrets in environment files committed to Git</li>
+          <li>Claude API key rotation documented and tested</li>
+          <li>Secret access audited and logged</li>
+        </ul>
+      </div>
+      <div class="story-footer">
+        <div class="tech-tags"><span class="tech-tag">AWS Secrets Manager</span><span class="tech-tag">Vault</span><span class="tech-tag">Security</span></div>
+        <div class="story-points"><span class="sp-dot"></span>5 pts</div>
+      </div>
+    </div>
+
+    <div class="story-card" data-priority="MEDIUM" data-sprint="6" data-search="load testing performance jmeter k6 spring boot stress test">
+      <div class="story-top">
+        <span class="story-id">INF-005</span>
+        <span class="priority-badge p-medium">MEDIUM</span>
+      </div>
+      <div class="story-title">Load Testing &amp; Performance Benchmarking</div>
+      <div class="story-desc">As a QA engineer, I need load tests simulating 500 concurrent email ingestions so that I can confirm the system handles peak HR periods (month-end batch onboarding) without degradation.</div>
+      <div class="sprint-badge">Sprint 6</div>
+      <button class="ac-toggle" onclick="toggleAC(this)">▶ Acceptance Criteria</button>
+      <div class="ac-content">
+        <ul>
+          <li>k6 test script simulates 500 email/min for 10 minutes</li>
+          <li>P95 API response time under 500ms</li>
+          <li>No DB connection pool exhaustion</li>
+          <li>Error rate under 0.1% at peak load</li>
+        </ul>
+      </div>
+      <div class="story-footer">
+        <div class="tech-tags"><span class="tech-tag">k6</span><span class="tech-tag">Load Testing</span><span class="tech-tag">QA</span></div>
+        <div class="story-points"><span class="sp-dot"></span>5 pts</div>
+      </div>
+    </div>
+
+    <div class="story-card" data-priority="MEDIUM" data-sprint="6" data-search="data privacy GDPR PII masking compliance employee">
+      <div class="story-top">
+        <span class="story-id">INF-006</span>
+        <span class="priority-badge p-medium">MEDIUM</span>
+      </div>
+      <div class="story-title">PII Data Masking &amp; GDPR Compliance</div>
+      <div class="story-desc">As a compliance officer, I need PII fields (email, full_name, phone) masked in non-production environments and a data deletion API so that GDPR right-to-erasure requests can be fulfilled.</div>
+      <div class="sprint-badge">Sprint 6</div>
+      <button class="ac-toggle" onclick="toggleAC(this)">▶ Acceptance Criteria</button>
+      <div class="ac-content">
+        <ul>
+          <li>Staging DB has PII masked via anonymization script</li>
+          <li>DELETE /api/employees/{id}/gdpr — hard-deletes all PII fields</li>
+          <li>Deletion request logged to gdpr_requests audit table</li>
+          <li>Data retention policy documented: 7 years for business records</li>
+        </ul>
+      </div>
+      <div class="story-footer">
+        <div class="tech-tags"><span class="tech-tag">PostgreSQL</span><span class="tech-tag">GDPR</span><span class="tech-tag">Spring Boot</span></div>
+        <div class="story-points"><span class="sp-dot"></span>5 pts</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</main>
+
+<footer style="background:var(--ink);color:#4A5568;text-align:center;padding:24px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1px;">
+  AGILE BACKLOG · 6 EPICS · 36 STORIES · 228 STORY POINTS · 6 × 2-WEEK SPRINTS
+</footer>
+
+<script>
+  // ── Filter by epic ──
+  let activeEpic = 'all';
+  let activePriority = null;
+
+  document.querySelectorAll('.filter-btn[data-filter]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn[data-filter]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeEpic = btn.dataset.filter;
+      filterCards();
+    });
+  });
+
+  document.querySelectorAll('.filter-btn[data-priority]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (activePriority === btn.dataset.priority) {
+        btn.classList.remove('active');
+        activePriority = null;
+      } else {
+        document.querySelectorAll('.filter-btn[data-priority]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        activePriority = btn.dataset.priority;
+      }
+      filterCards();
+    });
+  });
+
+  function filterCards() {
+    const q = document.getElementById('searchInput').value.toLowerCase();
+    document.querySelectorAll('.epic-block').forEach(epic => {
+      const epicMatch = activeEpic === 'all' || epic.dataset.epic === activeEpic;
+      const cards = epic.querySelectorAll('.story-card');
+      let visibleCount = 0;
+      cards.forEach(card => {
+        const priorityMatch = !activePriority || card.dataset.priority === activePriority;
+        const searchMatch = !q || card.dataset.search.includes(q) ||
+          card.querySelector('.story-title').textContent.toLowerCase().includes(q) ||
+          card.querySelector('.story-desc').textContent.toLowerCase().includes(q);
+        const show = epicMatch && priorityMatch && searchMatch;
+        card.classList.toggle('hidden', !show);
+        if (show) visibleCount++;
+      });
+      epic.style.display = (epicMatch && visibleCount > 0) ? '' : 'none';
+    });
+  }
+
+  // ── Acceptance criteria toggle ──
+  function toggleAC(btn) {
+    const content = btn.nextElementSibling;
+    const isOpen = content.classList.toggle('open');
+    btn.textContent = (isOpen ? '▼' : '▶') + ' Acceptance Criteria';
+  }
+</script>
+</body>
+</html>
